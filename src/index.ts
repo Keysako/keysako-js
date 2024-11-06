@@ -20,7 +20,7 @@ export class KeysakoClient {
         params.append("state", randomCode());
         const url = new URL(`https://auth.keysako.com/connect/authorize?${params.toString()}`);
 
-        window.open(url.toString());
+        window.location.href = url.toString();
     }
 
     public async complete(clientId: string, redirectUri: string, restrictToAge: number = 18): Promise<boolean> {
