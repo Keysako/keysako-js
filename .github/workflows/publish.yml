@@ -54,15 +54,8 @@ jobs:
           echo "    integrity=\"sha384-${{ env.CDN_HASH }}\"" >> $GITHUB_ENV
           echo "    crossorigin=\"anonymous\"></script>" >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "### Checksums" >> $GITHUB_ENV
-          echo "File hashes for integrity verification:" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "\`\`\`" >> $GITHUB_ENV
-          cat dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/checksums.txt >> $GITHUB_ENV
-          echo "\`\`\`" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-      
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:

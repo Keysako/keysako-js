@@ -53,22 +53,17 @@ async function generateChecksums(versionedDir, version) {
         'keysako-connect.esm.js'
     ];
 
-    const checksums = await Promise.all(
-        files.map(async (file) => {
-            const filePath = path.join(versionedDir, file);
-            if (await exists(filePath)) {
-                const content = await readFile(filePath);
-                const hash = await calculateHash(content);
-                return `${file} sha384-${hash}`;
-            }
-            return null;
-        })
-    );
+    const checksums = [];
+    for (const file of files) {
+        const filePath = path.join(versionedDir, file);
+        if (await exists(filePath)) {
+            const content = await readFile(filePath);
+            const hash = await calculateHash(content);
+            checksums.push(`${file} sha384-${hash}`);
+        }
+    }
 
-    const validChecksums = checksums.filter(Boolean);
-    const checksumsContent = validChecksums.join('\n');
-    await writeFile(path.join(versionedDir, 'checksums.txt'), checksumsContent);
-    return checksumsContent;
+    await writeFile(path.join(versionedDir, 'checksums.txt'), checksums.join('\n'));
 }
 
 async function build() {
@@ -127,11 +122,10 @@ async function build() {
 
         console.log('Generating checksums...');
         // Generate and write checksums
-        const checksums = await generateChecksums(versionedDir, version);
+        await generateChecksums(versionedDir, version);
 
         // Export variables for GitHub Actions
         await exportGithubEnv('CDN_HASH', cdnHash);
-        await exportGithubEnv('CHECKSUMS', checksums);
         await exportGithubEnv('VERSION', version);
         await exportGithubEnv('MAJOR_VERSION', majorVersion);
 
