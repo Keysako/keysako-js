@@ -1,0 +1,70 @@
+name: Publish Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Déclenche sur les tags qui commencent par 'v'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          files: |
+            dist/keysako-connect.min.js
+            dist/keysako-connect.min.js.map
+            dist/keysako-connect.esm.js
+            dist/keysako-connect.esm.js.map
+            dist/checksums.txt
+          body: |
+            ## Keysako Identity v${{ steps.get_version.outputs.VERSION }}
+            
+            ### Installation
+            
+            #### NPM
+            ```bash
+            npm install keysako-identity@${{ steps.get_version.outputs.VERSION }}
+            ```
+            
+            #### CDN
+            ```html
+            <script 
+                type="module" 
+                src="https://cdn.keysako.com/connect.js"
+                integrity="sha384-${{ env.CDN_HASH }}"
+                crossorigin="anonymous">
+            </script>
+            ```
+            
+            ### Checksums
+            ```
+            ${{ env.CHECKSUMS }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

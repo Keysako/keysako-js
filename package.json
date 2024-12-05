@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Une librairie simple pour intégrer l'authentification avec différents fournisseurs d'identité",
   "main": "dist/keysako-connect.min.js",
+  "module": "dist/keysako-connect.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -21,6 +22,14 @@
   ],
   "author": "Keysako Dev",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/keysako/keysako-js"
+  },
+  "bugs": {
+    "url": "https://github.com/keysako/keysako-js/issues"
+  },
+  "homepage": "https://keysako.github.io",
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.11",

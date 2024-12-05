@@ -4,9 +4,46 @@ A simple and customizable authentication button for Keysako identity provider.
 
 ## Installation
 
-```html
-<script type="module" src="https://cdn.keysako.com/connect.js"></script>
+### Via NPM
+
+```bash
+npm install keysako-identity
 ```
+
+```javascript
+// ESM
+import 'keysako-identity';
+
+// CommonJS
+require('keysako-identity');
+```
+
+### Via CDN
+
+```html
+<script 
+    type="module" 
+    src="https://cdn.keysako.com/connect.js"
+    integrity="sha384-S14zw64FMypZWlE/Ds/mmF1Whd3n8O4gY/AoZIyePn0DbD2lgMyGtp7HlDGFRbjW"
+    crossorigin="anonymous">
+</script>
+
+### Verifying Package Integrity
+
+To ensure the code you receive from the CDN is identical to the npm package:
+
+1. The CDN script includes an `integrity` attribute containing a SHA-384 hash of the file
+2. You can verify this hash against the npm package locally using:
+
+```bash
+# For npm package
+cat node_modules/keysako-identity/dist/keysako-connect.min.js | openssl dgst -sha384 -binary | openssl base64 -A
+
+# For CDN file
+curl -s https://cdn.keysako.com/connect.js | openssl dgst -sha384 -binary | openssl base64 -A
+```
+
+The hashes should match. Additionally, each release on npm includes a `checksums.txt` file containing the hashes of all distributed files.
 
 ## Basic Usage
 
