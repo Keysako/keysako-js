@@ -1,7 +1,15 @@
-const { minify } = require('terser');
-const fs = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { minify } = require('terser');
+const { promisify } = require('util');
+const { execSync } = require('child_process');
+
+// Convert fs functions to promises
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+const mkdir = promisify(fs.mkdir);
+const exists = promisify(fs.exists);
 
 async function calculateHash(content) {
     const hash = crypto.createHash('sha384');
@@ -9,123 +17,151 @@ async function calculateHash(content) {
     return hash.digest('base64');
 }
 
-async function generateChecksums(files) {
-    let checksums = '';
-    for (const [filename, content] of Object.entries(files)) {
-        const hash = await calculateHash(content);
-        checksums += `${hash}  ${filename}\n`;
+async function exportGithubEnv(name, value) {
+    const envFile = process.env.GITHUB_ENV;
+    if (envFile) {
+        await writeFile(envFile, `${name}=${value}\n`, { flag: 'a' });
     }
-    return checksums;
 }
 
-async function exportGithubEnv(name, value) {
-    // Si on est dans GitHub Actions
-    if (process.env.GITHUB_ENV) {
-        // Échapper les caractères spéciaux pour GitHub Actions
-        const escapedValue = value.replace(/[|&;$%@"<>()+,]/g, '\\$&');
-        await fs.appendFile(process.env.GITHUB_ENV, `${name}<<EOF\n${escapedValue}EOF\n`);
+async function writeFiles(code, sourceMap, type, version, majorVersion) {
+    const ext = type === 'esm' ? '.esm.js' : '.min.js';
+    const versionedDir = path.join(__dirname, 'dist', `v${majorVersion}`);
+    
+    // Ensure versioned directory exists
+    await mkdir(versionedDir, { recursive: true });
+
+    const versionedFile = path.join(versionedDir, `keysako-connect-${version}${ext}`);
+    const latestFile = path.join(versionedDir, `keysako-connect${ext}`);
+    
+    await writeFile(versionedFile, code);
+    await writeFile(latestFile, code);
+
+    if (sourceMap) {
+        await writeFile(`${versionedFile}.map`, JSON.stringify(sourceMap));
+        await writeFile(`${latestFile}.map`, JSON.stringify(sourceMap));
     }
+
+    return versionedDir;
+}
+
+async function generateChecksums(versionedDir, version) {
+    const files = [
+        `keysako-connect-${version}.min.js`,
+        `keysako-connect-${version}.min.js.map`,
+        `keysako-connect-${version}.esm.js`,
+        `keysako-connect-${version}.esm.js.map`,
+        'keysako-connect.min.js',
+        'keysako-connect.min.js.map',
+        'keysako-connect.esm.js',
+        'keysako-connect.esm.js.map'
+    ];
+
+    const checksums = await Promise.all(
+        files.map(async (file) => {
+            const filePath = path.join(versionedDir, file);
+            if (await exists(filePath)) {
+                const content = await readFile(filePath);
+                const hash = await calculateHash(content);
+                return `${file}: sha384-${hash}`;
+            }
+            return null;
+        })
+    );
+
+    const validChecksums = checksums.filter(Boolean);
+    await writeFile(path.join(versionedDir, 'checksums.txt'), validChecksums.join('\n'));
+    return validChecksums;
 }
 
 async function build() {
     try {
-        // Read the compiled JS file
+        // Create dist directory
+        await mkdir(path.join(__dirname, 'dist'), { recursive: true });
+
+        // Get version from package.json
+        const packageJson = JSON.parse(
+            await readFile(path.join(__dirname, 'package.json'), 'utf8')
+        );
+        const version = process.env.VERSION || packageJson.version;
+        const majorVersion = version.split('.')[0];
+
+        // Compile TypeScript
+        console.log('Compiling TypeScript...');
+        execSync('npm run build:ts', { stdio: 'inherit' });
+
+        // Read compiled JS file
         const inputFile = path.join(__dirname, 'dist', 'index.js');
-        const code = await fs.readFile(inputFile, 'utf8');
+        const code = await readFile(inputFile, 'utf8');
 
-        const files = {};
-
+        console.log('Creating UMD build...');
         // Minify with Terser for UMD build
         const minified = await minify(code, {
-            compress: {
-                dead_code: true,
-                drop_console: true,
-                drop_debugger: true,
-                passes: 2
-            },
-            mangle: true,
-            format: {
-                comments: false,
-                ecma: 2015
-            },
             sourceMap: {
-                filename: "keysako-connect.min.js",
-                url: "keysako-connect.min.js.map"
+                filename: `keysako-connect-${version}.min.js`,
+                url: `keysako-connect-${version}.min.js.map`
+            },
+            format: {
+                comments: false
             }
         });
 
-        // Write minified UMD file
-        const outputFile = path.join(__dirname, 'dist', 'keysako-connect.min.js');
-        await fs.writeFile(outputFile, minified.code);
-        files['keysako-connect.min.js'] = minified.code;
+        // Write UMD files
+        const versionedDir = await writeFiles(minified.code, minified.map, 'umd', version, majorVersion);
 
-        // Write source map if generated
-        if (minified.map) {
-            const mapFile = path.join(__dirname, 'dist', 'keysako-connect.min.js.map');
-            await fs.writeFile(mapFile, minified.map);
-            files['keysako-connect.min.js.map'] = minified.map;
-        }
-
-        // Create ESM build
-        const esmMinified = await minify(code, {
-            compress: {
-                dead_code: true,
-                drop_console: true,
-                drop_debugger: true,
-                passes: 2
-            },
-            mangle: true,
-            format: {
-                comments: false,
-                ecma: 2015
-            },
-            sourceMap: {
-                filename: "keysako-connect.esm.js",
-                url: "keysako-connect.esm.js.map"
-            }
-        });
-
-        // Write ESM file
-        const esmOutputFile = path.join(__dirname, 'dist', 'keysako-connect.esm.js');
-        await fs.writeFile(esmOutputFile, esmMinified.code);
-        files['keysako-connect.esm.js'] = esmMinified.code;
-
-        // Write ESM source map if generated
-        if (esmMinified.map) {
-            const esmMapFile = path.join(__dirname, 'dist', 'keysako-connect.esm.js.map');
-            await fs.writeFile(esmMapFile, esmMinified.map);
-            files['keysako-connect.esm.js.map'] = esmMinified.map;
-        }
-
-        // Generate and write checksums
-        const checksums = await generateChecksums(files);
-        await fs.writeFile(path.join(__dirname, 'dist', 'checksums.txt'), checksums);
-
-        // Calculate CDN hash
+        // Calculate hash for the minified file
         const cdnHash = await calculateHash(minified.code);
 
-        // Update README with the hash for CDN
-        const readmePath = path.join(__dirname, 'README.md');
-        const readme = await fs.readFile(readmePath, 'utf8');
-        const updatedReadme = readme.replace(/sha384-[a-zA-Z0-9+/=]+/g, `sha384-${cdnHash}`);
-        await fs.writeFile(readmePath, updatedReadme);
+        console.log('Creating ESM build...');
+        // Create ESM build
+        const esmMinified = await minify(code, {
+            sourceMap: {
+                filename: `keysako-connect-${version}.esm.js`,
+                url: `keysako-connect-${version}.esm.js.map`
+            },
+            module: true,
+            format: {
+                comments: false
+            }
+        });
+
+        // Write ESM files
+        await writeFiles(esmMinified.code, esmMinified.map, 'esm', version, majorVersion);
+
+        console.log('Generating checksums...');
+        // Generate and write checksums
+        const checksums = await generateChecksums(versionedDir, version);
 
         // Export variables for GitHub Actions
         await exportGithubEnv('CDN_HASH', cdnHash);
-        await exportGithubEnv('CHECKSUMS', checksums);
+        await exportGithubEnv('CHECKSUMS', checksums.join('\n'));
+        await exportGithubEnv('VERSION', version);
+        await exportGithubEnv('MAJOR_VERSION', majorVersion);
 
-        console.log('Build completed successfully!');
-        console.log('\nFile integrity hashes:');
-        console.log(checksums);
-        
-        // Log size comparison
-        const originalSize = Buffer.byteLength(code, 'utf8');
-        const minifiedSize = Buffer.byteLength(minified.code, 'utf8');
-        const reduction = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
-        
-        console.log(`\nOriginal size: ${(originalSize / 1024).toFixed(1)} KB`);
-        console.log(`Minified size: ${(minifiedSize / 1024).toFixed(1)} KB`);
-        console.log(`Reduction: ${reduction}%`);
+        // Copy and process index.html
+        console.log('Processing index.html...');
+        const htmlContent = await readFile(path.join(__dirname, 'src', 'index.html'), 'utf8');
+        const processedHtml = htmlContent
+            .replace(/\{\{\s*env\.CDN_HASH\s*\}\}/g, cdnHash)
+            .replace(/\{\{\s*env\.VERSION\s*\}\}/g, version)
+            .replace(/\{\{\s*env\.MAJOR_VERSION\s*\}\}/g, majorVersion);
+
+        await writeFile(path.join(__dirname, 'dist', 'index.html'), processedHtml);
+
+        // Copy and process configurator.html
+        console.log('Processing configurator.html...');
+        const configContent = await readFile(path.join(__dirname, 'configurator.html'), 'utf8');
+        const processedConfig = configContent
+            .replace(/\{\{\s*env\.CDN_HASH\s*\}\}/g, cdnHash)
+            .replace(/\{\{\s*env\.VERSION\s*\}\}/g, version)
+            .replace(/\{\{\s*env\.MAJOR_VERSION\s*\}\}/g, majorVersion);
+
+        await writeFile(path.join(__dirname, 'dist', 'configurator.html'), processedConfig);
+
+        console.log('Build completed successfully');
+        console.log('Version:', version);
+        console.log('Major Version:', majorVersion);
+        console.log('CDN Hash:', cdnHash);
     } catch (error) {
         console.error('Build failed:', error);
         process.exit(1);

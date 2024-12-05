@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keysako Button Configurator</title>
-    <script type="module" src="./dist/keysako-connect.min.js"></script>
+    <script src="https://cdn.keysako.com/v{{ env.MAJOR_VERSION }}/keysako-connect.min.js"></script>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -402,7 +402,7 @@
             const callbackName = document.getElementById('callback-name').value;
             const language = document.getElementById('language').value;
 
-            let code = '<script type="module" src="./dist/keysako-connect.min.js"><\/script>\n\n';
+            let code = '<script type="module" src="https://cdn.keysako.com/v{{ env.MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ env.CDN_HASH }}" crossorigin="anonymous"><\/script>\n\n';
             code += '<keysako-connect';
             if (clientId) code += `\n    client-id="${clientId}"`;
             if (redirectUri) code += `\n    redirect-uri="${redirectUri}"`;

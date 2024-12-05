@@ -1,6 +1,6 @@
 {
   "name": "keysako-identity",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Une librairie simple pour intégrer l'authentification avec différents fournisseurs d'identité",
   "main": "dist/keysako-connect.min.js",
   "module": "dist/keysako-connect.esm.js",
@@ -9,7 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && node build.js",
+    "build:ts": "tsc",
+    "build:bundle": "node build.js",
+    "build": "npm run build:ts && npm run build:bundle",
     "test": "jest",
     "prepare": "npm run build",
     "start": "node server.js"

@@ -20,30 +20,60 @@ require('keysako-identity');
 
 ### Via CDN
 
+For UMD (Universal Module Definition):
+
+Basic usage:
+```html
+<script src="https://cdn.keysako.com/v1/keysako-connect.min.js"></script>
+```
+
+Recommended secure usage:
+```html
+<script 
+    src="https://cdn.keysako.com/v1/keysako-connect.min.js"
+    integrity="sha384-${{ env.CDN_HASH }}"
+    crossorigin="anonymous">
+</script>
+```
+
+For ES Module:
+
+Basic usage:
+```html
+<script type="module" src="https://cdn.keysako.com/v1/keysako-connect.esm.js"></script>
+```
+
+Recommended secure usage:
 ```html
 <script 
     type="module" 
-    src="https://cdn.keysako.com/connect.js"
-    integrity="sha384-S14zw64FMypZWlE/Ds/mmF1Whd3n8O4gY/AoZIyePn0DbD2lgMyGtp7HlDGFRbjW"
+    src="https://cdn.keysako.com/v1/keysako-connect.esm.js"
+    integrity="sha384-${{ env.CDN_HASH }}"
     crossorigin="anonymous">
 </script>
+```
+
+### Security Best Practices
+
+While the `integrity` and `crossorigin` attributes are optional, we strongly recommend using them:
+
+- `integrity`: Ensures the file hasn't been tampered with by verifying its hash
+- `crossorigin="anonymous"`: Ensures proper CORS handling when loading the script from our CDN
 
 ### Verifying Package Integrity
 
-To ensure the code you receive from the CDN is identical to the npm package:
+Each release includes a `checksums.txt` file containing SHA-384 hashes for all distributed files. You can find these files in:
+- The npm package under `dist/v1/checksums.txt`
+- The CDN at `https://cdn.keysako.com/v1/checksums.txt`
+- The GitHub release assets
 
-1. The CDN script includes an `integrity` attribute containing a SHA-384 hash of the file
-2. You can verify this hash against the npm package locally using:
-
+To verify a file's integrity:
+1. Download the file you want to verify
+2. Calculate its SHA-384 hash:
 ```bash
-# For npm package
-cat node_modules/keysako-identity/dist/keysako-connect.min.js | openssl dgst -sha384 -binary | openssl base64 -A
-
-# For CDN file
-curl -s https://cdn.keysako.com/connect.js | openssl dgst -sha384 -binary | openssl base64 -A
+cat filename | openssl dgst -sha384 -binary | openssl base64 -A
 ```
-
-The hashes should match. Additionally, each release on npm includes a `checksums.txt` file containing the hashes of all distributed files.
+3. Compare the result with the hash in `checksums.txt`
 
 ## Basic Usage
 
@@ -61,12 +91,78 @@ The hashes should match. Additionally, each release on npm includes a `checksums
 | `client-id` | string | required | Your Keysako client ID |
 | `redirect-uri` | string | required | The URI where users will be redirected after authentication |
 | `theme` | string | 'default' | Button theme: 'default', 'light', or 'dark' |
-| `age` | string | - | Display an age badge on the button |
+| `age` | string | - | Display an age badge on the button (e.g., "18" for 18+) |
 | `shape` | string | 'rounded' | Button shape: 'rounded' or 'sharp' |
 | `logo-only` | boolean | false | Display only the logo without text |
 | `popup` | boolean | false | Use popup mode for authentication |
 | `callback` | string | - | Name of the callback function to handle authentication results |
 | `lang` | string | - | Force a specific language (overrides browser language) |
+
+## Events
+
+The button emits the following custom events:
+
+| Event Name | Description | Detail |
+|------------|-------------|---------|
+| `keysako:auth_complete` | Fired when authentication is complete | `{ success: boolean, token?: string, hasRequiredAge?: boolean, error?: string }` |
+| `keysako:tokens_updated` | Fired when tokens are updated | `{ token: string }` |
+| `keysako:tokens_cleared` | Fired when tokens are cleared | - |
+
+### Handling Events
+
+You can listen to these events in two ways:
+
+1. Using the `callback` attribute:
+```html
+<keysako-connect
+    client-id="your-client-id"
+    redirect-uri="your-redirect-uri"
+    callback="handleAuth">
+</keysako-connect>
+
+<script>
+function handleAuth(response) {
+    if (response.success) {
+        console.log('Authentication successful:', response.data);
+        if (response.hasRequiredAge) {
+            console.log('Age requirement met');
+        }
+    } else {
+        console.error('Authentication failed:', response.error);
+    }
+}
+</script>
+```
+
+2. Using event listeners:
+```html
+<keysako-connect
+    id="keysako-button"
+    client-id="your-client-id"
+    redirect-uri="your-redirect-uri">
+</keysako-connect>
+
+<script>
+const button = document.getElementById('keysako-button');
+
+button.addEventListener('keysako:auth_complete', (event) => {
+    const { success, token, hasRequiredAge, error } = event.detail;
+    if (success) {
+        console.log('Authentication successful:', token);
+    } else {
+        console.error('Authentication failed:', error);
+    }
+});
+
+button.addEventListener('keysako:tokens_updated', (event) => {
+    console.log('Token updated:', event.detail.token);
+});
+
+button.addEventListener('keysako:tokens_cleared', () => {
+    console.log('Tokens cleared');
+});
+</script>
+```
 
 ## Examples
 
@@ -99,72 +195,44 @@ The hashes should match. Additionally, each release on npm includes a `checksums
 </keysako-connect>
 
 <script>
-function handleAuth(result) {
-    if (result.success) {
-        console.log('User authenticated:', result.tokens);
+function handleAuth(response) {
+    if (response.success) {
+        console.log('Authentication successful:', response.data);
     } else {
-        console.error('Authentication failed:', result.error);
+        console.error('Authentication failed:', response.error);
     }
 }
 </script>
 ```
 
-## Internationalization
+## Browser Support
 
-The button automatically adapts to the user's browser language. Text and age format are translated into the following languages:
+The library is compatible with all modern browsers that support Web Components:
+- Chrome
+- Firefox
+- Safari
+- Edge
 
-| Language Code | Language | Example Age Format |
-|--------------|----------|-------------------|
-| `en` | English | 18+ |
-| `fr` | Français | 18 ans+ |
-| `es` | Español | +18 años |
-| `de` | Deutsch | ab 18 |
-| `it` | Italiano | 18+ |
-| `pt` | Português | 18+ |
-| `zh` | 中文 | 18岁+ |
-| `ja` | 日本語 | 18歳以上 |
-| `ko` | 한국어 | 18세+ |
-| `ar` | العربية | +18 |
-| `he` | עברית | 18+ |
-| `hi` | हिन्दी | 18+ |
-| `ru` | Русский | 18+ |
-| `tr` | Türkçe | 18+ |
-| `th` | ไทย | 18+ |
-| `vi` | Tiếng Việt | 18+ |
+## Development
 
-### Language Selection
+To build the library locally:
 
-By default, the button uses the user's browser language. You can override this by using the `lang` attribute:
-
-```html
-<!-- Auto-detect browser language (default) -->
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri">
-</keysako-connect>
-
-<!-- Force French language -->
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri"
-    lang="fr">
-</keysako-connect>
+1. Clone the repository
+```bash
+git clone https://github.com/keysako/keysako-js.git
+cd keysako-js
 ```
 
-#### Right-to-Left (RTL) Support
+2. Install dependencies
+```bash
+npm install
+```
 
-Arabic (ar) and Hebrew (he) are automatically displayed in RTL mode, with the logo position adjusted accordingly.
-
-## Events
-
-The button emits the following custom events:
-
-| Event Name | Description |
-|------------|-------------|
-| `keysako:auth_complete` | Fired when authentication is complete |
-| `keysako:tokens_updated` | Fired when tokens are updated |
-| `keysako:tokens_cleared` | Fired when tokens are cleared |
+3. Build the library
+```bash
+npm run build
+```
 
 ## License
 
-MIT License
+MIT License - see LICENSE file for details.

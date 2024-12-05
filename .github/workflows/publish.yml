@@ -26,9 +26,13 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Get version from tag
+      - name: Get version
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          MAJOR_VERSION=$(echo $VERSION | cut -d. -f1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_OUTPUT
       
       - name: Create Release Notes
         id: release_notes
@@ -47,7 +51,7 @@ jobs:
           echo "\`\`\`html" >> $GITHUB_ENV
           echo "<script " >> $GITHUB_ENV
           echo "    type=\"module\" " >> $GITHUB_ENV
-          echo "    src=\"https://${{ secrets.AZURE_STATIC_WEB_APP_URL }}/keysako-connect.min.js\"" >> $GITHUB_ENV
+          echo "    src=\"https://cdn.keysako.com/v1/keysako-connect.min.js\"" >> $GITHUB_ENV
           echo "    integrity=\"sha384-${{ env.CDN_HASH }}\"" >> $GITHUB_ENV
           echo "    crossorigin=\"anonymous\">" >> $GITHUB_ENV
           echo "</script>" >> $GITHUB_ENV
@@ -64,11 +68,15 @@ jobs:
         with:
           name: Release ${{ steps.get_version.outputs.VERSION }}
           files: |
-            dist/keysako-connect.min.js
-            dist/keysako-connect.min.js.map
-            dist/keysako-connect.esm.js
-            dist/keysako-connect.esm.js.map
-            dist/checksums.txt
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.min.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.min.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.esm.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.esm.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.min.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.min.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.esm.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.esm.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/checksums.txt
           body: ${{ env.RELEASE_NOTES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
