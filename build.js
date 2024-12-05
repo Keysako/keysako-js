@@ -21,7 +21,9 @@ async function generateChecksums(files) {
 async function exportGithubEnv(name, value) {
     // Si on est dans GitHub Actions
     if (process.env.GITHUB_ENV) {
-        await fs.appendFile(process.env.GITHUB_ENV, `${name}=${value}\n`);
+        // Échapper les caractères spéciaux pour GitHub Actions
+        const escapedValue = value.replace(/[|&;$%@"<>()+,]/g, '\\$&');
+        await fs.appendFile(process.env.GITHUB_ENV, `${name}<<EOF\n${escapedValue}EOF\n`);
     }
 }
 

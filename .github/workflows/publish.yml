@@ -27,6 +27,35 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       
+      - name: Create Release Notes
+        id: release_notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "## Keysako Identity v${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "### Installation" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "#### NPM" >> $GITHUB_ENV
+          echo "\`\`\`bash" >> $GITHUB_ENV
+          echo "npm install keysako-identity@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "\`\`\`" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "#### CDN" >> $GITHUB_ENV
+          echo "\`\`\`html" >> $GITHUB_ENV
+          echo "<script " >> $GITHUB_ENV
+          echo "    type=\"module\" " >> $GITHUB_ENV
+          echo "    src=\"https://cdn.keysako.com/connect.js\"" >> $GITHUB_ENV
+          echo "    integrity=\"sha384-${{ env.CDN_HASH }}\"" >> $GITHUB_ENV
+          echo "    crossorigin=\"anonymous\">" >> $GITHUB_ENV
+          echo "</script>" >> $GITHUB_ENV
+          echo "\`\`\`" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "### Checksums" >> $GITHUB_ENV
+          echo "\`\`\`" >> $GITHUB_ENV
+          echo "${{ env.CHECKSUMS }}" >> $GITHUB_ENV
+          echo "\`\`\`" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -37,30 +66,7 @@ jobs:
             dist/keysako-connect.esm.js
             dist/keysako-connect.esm.js.map
             dist/checksums.txt
-          body: |
-            ## Keysako Identity v${{ steps.get_version.outputs.VERSION }}
-            
-            ### Installation
-            
-            #### NPM
-            ```bash
-            npm install keysako-identity@${{ steps.get_version.outputs.VERSION }}
-            ```
-            
-            #### CDN
-            ```html
-            <script 
-                type="module" 
-                src="https://cdn.keysako.com/connect.js"
-                integrity="sha384-${{ env.CDN_HASH }}"
-                crossorigin="anonymous">
-            </script>
-            ```
-            
-            ### Checksums
-            ```
-            ${{ env.CHECKSUMS }}
-            ```
+          body: ${{ env.RELEASE_NOTES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
