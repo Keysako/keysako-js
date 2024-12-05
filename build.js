@@ -48,13 +48,9 @@ async function writeFiles(code, sourceMap, type, version, majorVersion) {
 async function generateChecksums(versionedDir, version) {
     const files = [
         `keysako-connect-${version}.min.js`,
-        `keysako-connect-${version}.min.js.map`,
         `keysako-connect-${version}.esm.js`,
-        `keysako-connect-${version}.esm.js.map`,
         'keysako-connect.min.js',
-        'keysako-connect.min.js.map',
-        'keysako-connect.esm.js',
-        'keysako-connect.esm.js.map'
+        'keysako-connect.esm.js'
     ];
 
     const checksums = await Promise.all(
@@ -63,7 +59,7 @@ async function generateChecksums(versionedDir, version) {
             if (await exists(filePath)) {
                 const content = await readFile(filePath);
                 const hash = await calculateHash(content);
-                return `${file}: sha384-${hash}`;
+                return `${file}|sha384-${hash}`;
             }
             return null;
         })
