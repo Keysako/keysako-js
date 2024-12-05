@@ -1,6 +1,6 @@
 {
   "name": "keysako-identity",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Une librairie simple pour intégrer l'authentification avec différents fournisseurs d'identité",
   "main": "dist/keysako-connect.min.js",
   "module": "dist/keysako-connect.esm.js",
