@@ -1,79 +1,54 @@
-export async function generateCodeVerifier(): Promise<string> {
-  const rando = randomCode();
-  const encoded = base64URLEncode(rando);
-  return encoded;
+/**
+ * Parse a JWT token and return its payload as an object
+ * @param token JWT token to parse
+ * @returns Parsed token payload
+ */
+export function parseJwt(token: string): any {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        console.error('Error parsing JWT:', e);
+        return null;
+    }
 }
 
-export function randomCode(): string {
-  let array = new Uint8Array(32);
-  array = globalThis.crypto.getRandomValues(array);
-  return String.fromCharCode.apply(null, Array.from(array));
+/**
+ * Generate a random string for PKCE
+ * @param length Length of the random string
+ * @returns Random string
+ */
+export function generateRandomString(length: number): string {
+    const array = new Uint8Array(length);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-function base64URLEncode(str: string): string {
-  const b64 = base64(str);
-  const encoded = b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-  return encoded;
+/**
+ * Create a code challenge for PKCE
+ * @param codeVerifier Code verifier to create challenge from
+ * @returns Code challenge
+ */
+export async function generateCodeChallenge(codeVerifier: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(codeVerifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 }
 
-const sha256 = async (str: string): Promise<string> => {
-  const digestOp = await getCryptoSubtle().digest(
-    { name: "SHA-256" },
-    new TextEncoder().encode(str)
-  );
-  return bufferToBase64UrlEncoded(digestOp);
-};
-
-const bufferToBase64UrlEncoded = (hash: ArrayBuffer): string => {
-  const uintArray = new Uint8Array(hash);
-  const numberArray = Array.from(uintArray);
-  const hashString = String.fromCharCode(...numberArray);
-  return urlEncodeB64(base64(hashString));
-};
-
-const urlEncodeB64 = (input: string) => {
-  const b64Chars: { [index: string]: string } = { "+": "-", "/": "_", "=": "" };
-  return input.replace(/[+/=]/g, (m: string) => b64Chars[m]);
-};
-
-export async function generateChallenge(
-  codeVerifierString: string
-): Promise<string> {
-  const sha = await sha256(codeVerifierString);
-  return sha;
-}
-
-export function getCryptoSubtle(): SubtleCrypto {
-  return getCrypto().subtle;
-}
-
-export function base64(data: string): string {
-  return btoa(data);
-}
-
-export function getCrypto(): Crypto {
-  return globalThis.crypto;
-}
-
-export function getVerifier(): { verifier: string } {
-  if (typeof window !== "undefined") {
-    return JSON.parse(sessionStorage.getItem('verifier') || '{"verifier": ""}');
-  }
-
-  return { verifier: '' };
-}
-
-export function parseJwt(token: string) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-
-  return JSON.parse(jsonPayload);
-}
-
-export function getQueryParam(param: string): string | null {
-  const params = new URLSearchParams(window.location.search);
-  return params.get(param);
+/**
+ * Check if the current environment is mobile
+ * @returns true if mobile, false otherwise
+ */
+export function isMobileDevice(): boolean {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }

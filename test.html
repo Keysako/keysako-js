@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keysako Button Test</title>
+    <script type="module" src="./dist/keysako-connect.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+        .section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Keysako Button Test</h1>
+        
+        <div class="section">
+            <h2>Mode Redirection</h2>
+            <div class="button-container">
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="light">
+                </identity-button>
+
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="dark">
+                </identity-button>
+            </div>
+
+            <div class="button-container">
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="light"
+                    age="18">
+                </identity-button>
+
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="dark"
+                    age="18">
+                </identity-button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Mode Popup</h2>
+            <div class="button-container">
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="light"
+                    popup>
+                </identity-button>
+
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="dark"
+                    popup>
+                </identity-button>
+            </div>
+
+            <div class="button-container">
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="light"
+                    age="18"
+                    popup>
+                </identity-button>
+
+                <identity-button 
+                    client-id="demo"
+                    redirect-uri="http://localhost:8000/test.html"
+                    theme="dark"
+                    age="18"
+                    popup>
+                </identity-button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { KeysakoClient } from './dist/keysako-connect.min.js';
+
+        const keysako = new KeysakoClient({
+            clientId: 'keysako-test',
+            age: 18,
+            usePopup: true,
+            onAuthComplete: (result) => {
+                console.log('Auth result:', result);
+                if (result.success) {
+                    console.log('Authentication successful');
+                    if (result.hasRequiredAge !== undefined) {
+                        console.log('Has required age:', result.hasRequiredAge);
+                    }
+                } else {
+                    console.error('Authentication failed:', result.error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
