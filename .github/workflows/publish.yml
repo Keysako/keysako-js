@@ -49,15 +49,15 @@ jobs:
           echo "" >> $GITHUB_ENV
           echo "#### CDN" >> $GITHUB_ENV
           echo "\`\`\`html" >> $GITHUB_ENV
-          echo "<script " >> $GITHUB_ENV
-          echo "    type=\"module\" " >> $GITHUB_ENV
-          echo "    src=\"https://cdn.keysako.com/v1/keysako-connect.min.js\"" >> $GITHUB_ENV
+          echo "<script" >> $GITHUB_ENV
+          echo "    src=\"https://cdn.keysako.com/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.min.js\"" >> $GITHUB_ENV
           echo "    integrity=\"sha384-${{ env.CDN_HASH }}\"" >> $GITHUB_ENV
-          echo "    crossorigin=\"anonymous\">" >> $GITHUB_ENV
-          echo "</script>" >> $GITHUB_ENV
+          echo "    crossorigin=\"anonymous\"></script>" >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "### Checksums" >> $GITHUB_ENV
+          echo "File hashes for integrity verification:" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
           echo "${{ env.CHECKSUMS }}" >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
