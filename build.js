@@ -59,15 +59,16 @@ async function generateChecksums(versionedDir, version) {
             if (await exists(filePath)) {
                 const content = await readFile(filePath);
                 const hash = await calculateHash(content);
-                return `${file}|sha384-${hash}`;
+                return `${file} sha384-${hash}`;
             }
             return null;
         })
     );
 
     const validChecksums = checksums.filter(Boolean);
-    await writeFile(path.join(versionedDir, 'checksums.txt'), validChecksums.join('\n'));
-    return validChecksums;
+    const checksumsContent = validChecksums.join('\n');
+    await writeFile(path.join(versionedDir, 'checksums.txt'), checksumsContent);
+    return checksumsContent;
 }
 
 async function build() {
@@ -130,7 +131,7 @@ async function build() {
 
         // Export variables for GitHub Actions
         await exportGithubEnv('CDN_HASH', cdnHash);
-        await exportGithubEnv('CHECKSUMS', checksums.join('\n'));
+        await exportGithubEnv('CHECKSUMS', checksums);
         await exportGithubEnv('VERSION', version);
         await exportGithubEnv('MAJOR_VERSION', majorVersion);
 

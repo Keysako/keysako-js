@@ -59,11 +59,7 @@ jobs:
           echo "File hashes for integrity verification:" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
-          echo "# Format: filename|hash" >> $GITHUB_ENV
-          IFS=$'\n'
-          for checksum in ${{ env.CHECKSUMS }}; do
-            echo "$checksum" >> $GITHUB_ENV
-          done
+          cat dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/checksums.txt >> $GITHUB_ENV
           echo "\`\`\`" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       
