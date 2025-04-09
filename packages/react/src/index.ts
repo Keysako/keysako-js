@@ -1,3 +1,3 @@
 export { KeysakoButton } from './KeysakoButton';
-export { KeysakoProvider, useKeysako } from './KeysakoProvider';
+export { KeysakoProvider } from './KeysakoProvider';
 export * from './types';

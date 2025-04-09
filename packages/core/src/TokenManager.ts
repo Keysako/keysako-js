@@ -1,5 +1,5 @@
-import { parseJwt } from './utils';
 import { TokenResponse, TokenClaims, AuthEvents } from './types';
+import { parseJwt } from './utils';
 
 /**
  * TokenManager class for handling authentication tokens
@@ -7,8 +7,6 @@ import { TokenResponse, TokenClaims, AuthEvents } from './types';
 export class TokenManager {
   private static readonly TOKEN_KEY = 'keysako_tokens';
   private static instance: TokenManager;
-
-  private constructor() {}
 
   /**
    * Get the singleton instance of TokenManager
@@ -29,17 +27,19 @@ export class TokenManager {
     const expiresAt = Date.now() + tokens.expires_in * 1000;
     const tokenData = {
       ...tokens,
-      expires_at: expiresAt
+      expires_at: expiresAt,
     };
     localStorage.setItem(TokenManager.TOKEN_KEY, JSON.stringify(tokenData));
 
     // Dispatch an event to notify that tokens have been updated
-    window.dispatchEvent(new CustomEvent(AuthEvents.TOKENS_UPDATED, {
-      detail: {
-        ...tokenData,
-        claims: this.getTokenClaims()
-      }
-    }));
+    window.dispatchEvent(
+      new CustomEvent(AuthEvents.TOKENS_UPDATED, {
+        detail: {
+          ...tokenData,
+          claims: this.getTokenClaims(),
+        },
+      })
+    );
   }
 
   /**
@@ -66,7 +66,7 @@ export class TokenManager {
   getTokenClaims(): TokenClaims | null {
     const tokens = this.getTokens();
     if (!tokens?.id_token) return null;
-    
+
     try {
       return parseJwt(tokens.id_token);
     } catch (error) {
@@ -82,7 +82,7 @@ export class TokenManager {
   hasRequiredAge(): boolean {
     const claims = this.getTokenClaims();
     if (!claims) return false;
-    
+
     // Check for the "has_minimum_age" claim
     // If it doesn't exist or is equal to true, the user has the minimum age
     return claims.has_minimum_age === undefined || claims.has_minimum_age === true;
@@ -133,8 +133,8 @@ export class TokenManager {
    * @returns Token response
    */
   async getTokensFromCode(
-    code: string, 
-    codeVerifier: string, 
+    code: string,
+    codeVerifier: string,
     redirectUri: string = window.location.origin,
     clientId: string,
     tokenEndpoint: string
@@ -142,15 +142,15 @@ export class TokenManager {
     const response = await fetch(tokenEndpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: redirectUri,
         client_id: clientId,
-        code_verifier: codeVerifier
-      })
+        code_verifier: codeVerifier,
+      }),
     });
 
     if (!response.ok) {

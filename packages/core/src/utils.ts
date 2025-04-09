@@ -8,7 +8,7 @@ export function parseJwt(token: string): any {
     // Get the payload part of the JWT (second part)
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    
+
     // Decode the base64 string
     const jsonPayload = decodeURIComponent(
       atob(base64)
@@ -53,13 +53,13 @@ export function getContrastColor(backgroundColor: string): string {
     const r = parseInt(backgroundColor.slice(1, 3), 16);
     const g = parseInt(backgroundColor.slice(3, 5), 16);
     const b = parseInt(backgroundColor.slice(5, 7), 16);
-    
+
     // Calculate luminance (standard formula)
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
+
     return luminance > 0.5 ? '#000' : '#fff';
   }
-  
+
   // By default, return black
   return '#000';
 }

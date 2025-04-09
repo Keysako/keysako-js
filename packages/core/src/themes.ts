@@ -21,30 +21,29 @@ export const buttonThemes: Record<string, ButtonThemeStyles> = {
     border: 'none',
     hoverBg: 'linear-gradient(135deg, #5d7df9, #9566d9)',
     shadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
   },
   light: {
     background: '#ffffff',
     color: '#757575',
     border: '1px solid #dadce0',
     hoverBg: '#f8f8f8',
-    shadow: '0 1px 3px rgba(0, 0, 0, 0.08)'
+    shadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
   },
   dark: {
     background: '#202124',
     color: '#ffffff',
     border: '1px solid #5f6368',
     hoverBg: '#303134',
-    shadow: '0 2px 4px rgba(0, 0, 0, 0.25)'
-  }
+    shadow: '0 2px 4px rgba(0, 0, 0, 0.25)',
+  },
 };
 
 /**
  * Get CSS styles for a button
- * @param theme Button theme
  * @returns CSS styles as a string
  */
-export function getButtonStyles(theme: string = 'default'): string {
+export function getButtonStyles(): string {
   return `
     :host {
       display: inline-block;

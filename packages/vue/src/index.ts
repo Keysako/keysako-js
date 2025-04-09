@@ -1,6 +1,7 @@
 import { App } from 'vue';
-import { KeysakoButton } from './KeysakoButton';
+
 import { createKeysako } from './createKeysako';
+import { KeysakoButton } from './KeysakoButton';
 
 // Export components and composables
 export { KeysakoButton };
@@ -9,7 +10,7 @@ export * from './types';
 
 // Vue plugin
 export default {
-  install: (app: App, options = {}) => {
+  install: (app: App, _ = {}) => {
     app.component('KeysakoButton', KeysakoButton);
-  }
+  },
 };

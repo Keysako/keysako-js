@@ -4,31 +4,31 @@
 export interface KeysakoButtonOptions {
   /** Client ID from Keysako */
   clientId: string;
-  
+
   /** URI where users will be redirected after authentication */
   redirectUri?: string;
-  
+
   /** Button theme ('default', 'light', or 'dark') */
   theme?: ButtonTheme;
-  
+
   /** Button shape ('rounded' or 'sharp') */
   shape?: ButtonShape;
-  
+
   /** Display only the logo without text */
   logoOnly?: boolean;
-  
+
   /** Whether to use a popup for authentication */
   usePopup?: boolean;
-  
+
   /** Age verification requirement */
   age?: number;
-  
+
   /** Button locale (e.g., 'en', 'fr', 'es') */
   locale?: string;
-  
+
   /** Callback function to handle authentication results */
   onSuccess?: (response: AuthResult) => void;
-  
+
   /** Callback function to handle authentication errors */
   onError?: (error: AuthError) => void;
 }
@@ -39,10 +39,10 @@ export interface KeysakoButtonOptions {
 export interface AuthResult {
   /** Whether the authentication was successful */
   success: boolean;
-  
+
   /** Access token (only present if success is true) */
   token?: string;
-  
+
   /** Whether the age requirement was met (if age verification was requested) */
   hasRequiredAge?: boolean;
 
@@ -56,7 +56,7 @@ export interface AuthResult {
 export interface AuthError {
   /** Error message */
   error: string;
-  
+
   /** Additional details */
   details?: any;
 }
@@ -77,16 +77,16 @@ export type ButtonShape = 'rounded' | 'sharp';
 export interface IdentityConfig {
   /** Client ID from Keysako */
   clientId: string;
-  
+
   /** URI where users will be redirected after authentication */
   redirectUri?: string;
-  
+
   /** Age verification requirement */
   age?: number;
-  
+
   /** Whether to use a popup for authentication */
   usePopup?: boolean;
-  
+
   /** Callback function to handle authentication results */
   onAuthComplete?: (result: AuthResult) => void;
 }
@@ -97,13 +97,13 @@ export interface IdentityConfig {
 export interface TokenResponse {
   /** Access token */
   access_token: string;
-  
+
   /** ID token (JWT) */
   id_token: string;
-  
+
   /** Token type (usually "Bearer") */
   token_type: string;
-  
+
   /** Token expiration time in seconds */
   expires_in: number;
 }
@@ -123,5 +123,5 @@ export enum AuthEvents {
   AUTH_COMPLETE = 'keysako:auth_complete',
   TOKENS_UPDATED = 'keysako:tokens_updated',
   TOKENS_CLEARED = 'keysako:tokens_cleared',
-  ERROR = 'keysako:error'
+  ERROR = 'keysako:error',
 }

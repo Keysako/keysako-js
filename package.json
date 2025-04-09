@@ -1,6 +1,6 @@
 {
   "name": "keysako-identity",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simple library for integrating authentication with various identity providers",
   "private": true,
   "workspaces": [
@@ -25,8 +25,10 @@
     "start": "node server.js",
     "lint": "eslint \"packages/**/src/**/*.{ts,tsx,js,jsx}\"",
     "lint:fix": "eslint \"packages/**/src/**/*.{ts,tsx,js,jsx}\" --fix",
+    "format": "prettier --write \"packages/**/src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "tsc --noEmit",
-    "validate": "npm run lint && npm run typecheck && npm run test"
+    "validate": "npm run lint && npm run typecheck && npm run test",
+    "fix-all": "npm run format && npm run lint:fix"
   },
   "keywords": [
     "identity",

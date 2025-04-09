@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { KeysakoButton as CoreButton, AuthEvents } from '@keysako-identity/core';
+import React, { useEffect, useRef } from 'react';
+
 import { KeysakoButtonProps } from './types';
-import { useKeysako } from './KeysakoProvider';
 
 /**
  * React component for Keysako Sign-in Button
@@ -20,11 +20,9 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
   className,
   style,
   onSuccess,
-  onError
+  onError,
 }) => {
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [buttonInstance, setButtonInstance] = useState<CoreButton | null>(null);
-  const keysako = useKeysako();
 
   // If used within KeysakoProvider, use the context values
   const finalClientId = clientId || '';
@@ -36,7 +34,7 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
 
     // Create style element for the button
     const styleElement = document.createElement('style');
-    
+
     // Create button instance
     const button = new CoreButton({
       clientId: finalClientId,
@@ -48,7 +46,7 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
       age,
       locale,
       onSuccess,
-      onError
+      onError,
     });
 
     // Add styles
@@ -59,25 +57,13 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
     const buttonElement = button.createButtonElement();
     buttonRef.current.appendChild(buttonElement);
 
-    // Store button instance
-    setButtonInstance(button);
-
     // Clean up
     return () => {
       if (buttonRef.current) {
         buttonRef.current.innerHTML = '';
       }
     };
-  }, [
-    finalClientId,
-    finalRedirectUri,
-    theme,
-    shape,
-    logoOnly,
-    finalUsePopup,
-    age,
-    locale
-  ]);
+  }, [finalClientId, finalRedirectUri, theme, shape, logoOnly, finalUsePopup, age, locale]);
 
   // Handle authentication events
   useEffect(() => {
@@ -97,12 +83,5 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
     };
   }, [onSuccess, onError]);
 
-  return (
-    <div 
-      ref={buttonRef} 
-      className={className} 
-      style={style} 
-      data-keysako-button="true"
-    />
-  );
+  return <div ref={buttonRef} className={className} style={style} data-keysako-button="true" />;
 };

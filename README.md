@@ -70,36 +70,50 @@ function LoginPage() {
 
 // Using the provider for app-wide authentication
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authResult, setAuthResult] = useState(null);
+  
+  // Handlers for authentication events
+  const handleSuccess = (result) => {
+    console.log('Authentication successful:', result);
+    setAuthResult(result);
+    setIsAuthenticated(result.success);
+  };
+  
+  const handleError = (error) => {
+    console.error('Authentication failed:', error);
+    setIsAuthenticated(false);
+  };
+  
   return (
     <KeysakoProvider
       clientId="your-client-id"
       redirectUri="your-redirect-uri"
     >
-      <YourApp />
+      <div>
+        {isAuthenticated ? (
+          <div>
+            <h1>Welcome to your profile</h1>
+            <button onClick={() => {
+              // Use TokenManager to clear tokens and update state
+              const tokenManager = TokenManager.getInstance();
+              tokenManager.clearTokens();
+              setIsAuthenticated(false);
+            }}>Sign out</button>
+          </div>
+        ) : (
+          <div>
+            <h1>Please sign in</h1>
+            <KeysakoButton
+              clientId="your-client-id"
+              redirectUri="your-redirect-uri"
+              onSuccess={handleSuccess}
+              onError={handleError}
+            />
+          </div>
+        )}
+      </div>
     </KeysakoProvider>
-  );
-}
-
-// Using the hook in components
-import { useKeysako } from '@keysako-identity/react';
-
-function Profile() {
-  const { isAuthenticated, login, logout } = useKeysako();
-  
-  return (
-    <div>
-      {isAuthenticated ? (
-        <div>
-          <h1>Welcome to your profile</h1>
-          <button onClick={logout}>Sign out</button>
-        </div>
-      ) : (
-        <div>
-          <h1>Please sign in</h1>
-          <button onClick={login}>Sign in</button>
-        </div>
-      )}
-    </div>
   );
 }
 ```

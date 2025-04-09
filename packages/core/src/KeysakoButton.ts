@@ -1,7 +1,7 @@
 import { IdentityProvider } from './IdentityProvider';
-import { TokenManager } from './TokenManager';
 import { buttonThemes } from './themes';
-import { KeysakoButtonOptions, AuthEvents, AuthResult, ButtonTheme } from './types';
+import { TokenManager } from './TokenManager';
+import { KeysakoButtonOptions, AuthEvents, AuthResult } from './types';
 import { getContrastColor } from './utils';
 
 /**
@@ -33,7 +33,7 @@ export function getButtonText(locale: string): ButtonText {
     signIn: 'Sign in with Keysako',
     signOut: 'Sign out',
     ageFormat: '{age}+',
-    isRTL: false
+    isRTL: false,
   };
 
   // Extract language code
@@ -46,26 +46,26 @@ export function getButtonText(locale: string): ButtonText {
       signIn: 'Se connecter avec Keysako',
       signOut: 'Se déconnecter',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     es: {
       signIn: 'Iniciar sesión con Keysako',
       signOut: 'Cerrar sesión',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     de: {
       signIn: 'Mit Keysako anmelden',
       signOut: 'Abmelden',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     ar: {
       signIn: 'تسجيل الدخول باستخدام Keysako',
       signOut: 'تسجيل الخروج',
       ageFormat: '+{age}',
-      isRTL: true
-    }
+      isRTL: true,
+    },
   };
 
   return translations[lang] || defaultText;
@@ -92,7 +92,7 @@ export class KeysakoButton {
       shape: 'rounded',
       logoOnly: false,
       usePopup: false,
-      ...options
+      ...options,
     };
 
     if (!this.options.clientId) {
@@ -114,7 +114,7 @@ export class KeysakoButton {
       usePopup: this.options.usePopup,
       onAuthComplete: (result: AuthResult) => {
         this.handleAuthResult(result);
-      }
+      },
     });
   }
 
@@ -144,7 +144,7 @@ export class KeysakoButton {
   createButtonElement(): HTMLElement {
     const button = document.createElement('button');
     button.className = 'keysako-button';
-    
+
     if (this.options.logoOnly) {
       button.classList.add('logo-only');
     }
@@ -152,13 +152,13 @@ export class KeysakoButton {
     // Get language preference
     const userLang = this.options.locale || navigator.language || 'en';
     const buttonText = getButtonText(userLang);
-    
+
     // Handle RTL languages
     if (buttonText.isRTL) {
       button.setAttribute('dir', 'rtl');
       button.style.fontFamily = 'system-ui, -apple-system, sans-serif';
     }
-    
+
     // Add the logo SVG
     const logoContainer = document.createElement('span');
     logoContainer.className = 'keysako-button-logo';
@@ -169,20 +169,24 @@ export class KeysakoButton {
       if (buttonText.isRTL) {
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken() ? buttonText.signOut : buttonText.signIn;
+        text.textContent = this.tokenManager.hasValidAccessToken()
+          ? buttonText.signOut
+          : buttonText.signIn;
         button.appendChild(text);
         button.appendChild(logoContainer);
       } else {
         button.appendChild(logoContainer);
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken() ? buttonText.signOut : buttonText.signIn;
+        text.textContent = this.tokenManager.hasValidAccessToken()
+          ? buttonText.signOut
+          : buttonText.signIn;
         button.appendChild(text);
       }
     } else {
       button.appendChild(logoContainer);
     }
-    
+
     // Add age badge if specified
     if (this.options.age) {
       const badge = document.createElement('span');
@@ -213,18 +217,21 @@ export class KeysakoButton {
    */
   private applyTheme(button: HTMLElement): void {
     const theme = buttonThemes[this.options.theme as string] || buttonThemes.default;
-    
+
     // Apply CSS variables
     button.style.setProperty('--keysako-btn-bg', theme.background);
     button.style.setProperty('--keysako-btn-color', theme.color);
     button.style.setProperty('--keysako-btn-border', theme.border);
     button.style.setProperty('--keysako-btn-hover-bg', theme.hoverBg);
     button.style.setProperty('--keysako-btn-shadow', theme.shadow);
-    
+
     // In logo-only mode and rounded shape, use a perfect circle
-    const radius = this.options.logoOnly && this.options.shape === 'rounded' 
-      ? '50%' 
-      : this.options.shape === 'rounded' ? '6px' : '0';
+    const radius =
+      this.options.logoOnly && this.options.shape === 'rounded'
+        ? '50%'
+        : this.options.shape === 'rounded'
+        ? '6px'
+        : '0';
     button.style.setProperty('--keysako-btn-radius', radius);
 
     // Set badge colors based on the theme
@@ -237,19 +244,19 @@ export class KeysakoButton {
     } else {
       // For the default theme (purple) and others
       // Use a contrasting color with the button background
-      const bgColor = theme.background.includes('linear-gradient') 
+      const bgColor = theme.background.includes('linear-gradient')
         ? '#000' // For gradients, use black
         : getContrastColor(theme.background);
       const textColor = bgColor === '#000' ? '#fff' : '#000';
-      
+
       button.style.setProperty('--keysako-badge-bg', bgColor);
       button.style.setProperty('--keysako-badge-color', textColor);
     }
-    
+
     if (theme.backdropFilter) {
       button.style.setProperty('--keysako-btn-backdrop-filter', theme.backdropFilter);
     }
-    
+
     if (theme.textShadow) {
       button.style.setProperty('--keysako-btn-text-shadow', theme.textShadow);
     }
@@ -279,11 +286,11 @@ export class KeysakoButton {
 
     const userLang = this.options.locale || navigator.language || 'en';
     const buttonText = getButtonText(userLang);
-    
+
     const textElement = this.element.querySelector('.keysako-button-text');
     if (textElement) {
-      textElement.textContent = this.tokenManager.hasValidAccessToken() 
-        ? buttonText.signOut 
+      textElement.textContent = this.tokenManager.hasValidAccessToken()
+        ? buttonText.signOut
         : buttonText.signIn;
     }
   }

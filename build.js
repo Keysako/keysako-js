@@ -129,25 +129,8 @@ async function build() {
         await exportGithubEnv('VERSION', version);
         await exportGithubEnv('MAJOR_VERSION', majorVersion);
 
-        // Copy and process index.html
-        console.log('Processing index.html...');
-        const htmlContent = await readFile(path.join(__dirname, 'src', 'index.html'), 'utf8');
-        const processedHtml = htmlContent
-            .replace(/\{\{\s*env\.CDN_HASH\s*\}\}/g, cdnHash)
-            .replace(/\{\{\s*env\.VERSION\s*\}\}/g, version)
-            .replace(/\{\{\s*env\.MAJOR_VERSION\s*\}\}/g, majorVersion);
-
-        await writeFile(path.join(__dirname, 'dist', 'index.html'), processedHtml);
-
-        // Copy and process configurator.html
-        console.log('Processing configurator.html...');
-        const configContent = await readFile(path.join(__dirname, 'configurator.html'), 'utf8');
-        const processedConfig = configContent
-            .replace(/\{\{\s*env\.CDN_HASH\s*\}\}/g, cdnHash)
-            .replace(/\{\{\s*env\.VERSION\s*\}\}/g, version)
-            .replace(/\{\{\s*env\.MAJOR_VERSION\s*\}\}/g, majorVersion);
-
-        await writeFile(path.join(__dirname, 'dist', 'configurator.html'), processedConfig);
+        // Skip HTML processing as the files have been moved to packages
+        console.log('Skipping HTML processing as files have been moved to packages structure');
 
         console.log('Build completed successfully');
         console.log('Version:', version);
