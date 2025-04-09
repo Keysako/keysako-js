@@ -4,7 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keysako Button Test</title>
-    <script type="module" src="./dist/keysako-connect.min.js"></script>
+    <script type="module">
+        import { KeysakoButton } from './packages/core/dist/index.min.js';
+        
+        // Enregistrer le composant web personnalisé
+        if (!customElements.get('keysako-connect')) {
+            customElements.define('keysako-connect', 
+                class KeysakoConnectElement extends HTMLElement {
+                    constructor() {
+                        super();
+                        this._button = null;
+                    }
+                    
+                    connectedCallback() {
+                        // Créer une instance de KeysakoButton
+                        this._button = new KeysakoButton({
+                            clientId: this.getAttribute('client-id'),
+                            redirectUri: this.getAttribute('redirect-uri'),
+                            theme: this.getAttribute('theme') || 'default',
+                            shape: this.getAttribute('shape') || 'rounded',
+                            logoOnly: this.hasAttribute('logo-only'),
+                            usePopup: this.hasAttribute('use-popup'),
+                            age: this.getAttribute('age') ? parseInt(this.getAttribute('age')) : undefined,
+                            locale: this.getAttribute('locale')
+                        });
+                        
+                        // Ajouter les styles
+                        const style = document.createElement('style');
+                        style.textContent = this._button.getStyles();
+                        this.appendChild(style);
+                        
+                        // Ajouter le bouton
+                        const buttonElement = this._button.createButtonElement();
+                        this.appendChild(buttonElement);
+                    }
+                }
+            );
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,79 +79,82 @@
         <div class="section">
             <h2>Mode Redirection</h2>
             <div class="button-container">
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="light">
-                </identity-button>
+                </keysako-connect>
 
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="dark">
-                </identity-button>
+                </keysako-connect>
             </div>
 
             <div class="button-container">
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="light"
                     age="18">
-                </identity-button>
+                </keysako-connect>
 
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="dark"
                     age="18">
-                </identity-button>
+                </keysako-connect>
             </div>
         </div>
 
         <div class="section">
             <h2>Mode Popup</h2>
             <div class="button-container">
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="light"
-                    popup>
-                </identity-button>
+                    use-popup>
+                </keysako-connect>
 
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="dark"
-                    popup>
-                </identity-button>
+                    use-popup>
+                </keysako-connect>
             </div>
 
             <div class="button-container">
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="light"
                     age="18"
-                    popup>
-                </identity-button>
+                    use-popup>
+                </keysako-connect>
 
-                <identity-button 
+                <keysako-connect 
                     client-id="demo"
                     redirect-uri="http://localhost:8000/test.html"
                     theme="dark"
                     age="18"
-                    popup>
-                </identity-button>
+                    use-popup>
+                </keysako-connect>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { KeysakoClient } from './dist/keysako-connect.min.js';
+        // Vous pouvez également utiliser l'API programmatique ici
+        import { KeysakoButton } from './packages/core/dist/index.min.js';
 
-        const keysako = new KeysakoClient({
-            clientId: 'keysako-test',
+        // Exemple d'utilisation programmatique
+        const keysako = new KeysakoButton({
+            clientId: 'demo',
+            redirectUri: 'http://localhost:8000/test.html',
             age: 18,
             usePopup: true,
             onAuthComplete: (result) => {
@@ -129,6 +169,9 @@
                 }
             }
         });
+
+        // Vous pouvez utiliser keysako.createButtonElement() pour ajouter le bouton à un élément DOM
+        // Exemple: document.getElementById('button-container').appendChild(keysako.createButtonElement());
     </script>
 </body>
 </html>

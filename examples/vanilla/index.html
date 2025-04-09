@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keysako Identity - Vanilla JS Example</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .status {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background-color: #f5f5f5;
+      width: 100%;
+    }
+    
+    pre {
+      background-color: #f0f0f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow: auto;
+      max-height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Keysako Identity - Vanilla JS Example</h1>
+    
+    <p>This example demonstrates how to use the Keysako Identity button with vanilla JavaScript.</p>
+    
+    <div class="buttons">
+      <!-- Default button -->
+      <keysako-connect
+        id="keysako-button"
+        client-id="your-client-id"
+        redirect-uri="http://localhost:8080/examples/vanilla/"
+        theme="default">
+      </keysako-connect>
+      
+      <!-- Light theme button -->
+      <keysako-connect
+        client-id="your-client-id"
+        redirect-uri="http://localhost:8080/examples/vanilla/"
+        theme="light">
+      </keysako-connect>
+      
+      <!-- Dark theme button -->
+      <keysako-connect
+        client-id="your-client-id"
+        redirect-uri="http://localhost:8080/examples/vanilla/"
+        theme="dark">
+      </keysako-connect>
+      
+      <!-- Logo only button -->
+      <keysako-connect
+        client-id="your-client-id"
+        redirect-uri="http://localhost:8080/examples/vanilla/"
+        logo-only>
+      </keysako-connect>
+    </div>
+    
+    <div class="status">
+      <h2>Authentication Status</h2>
+      <div id="auth-status">Not authenticated</div>
+      
+      <h2>Token Information</h2>
+      <pre id="token-info">No token available</pre>
+      
+      <button id="get-token-btn" disabled>Get Token Info</button>
+      <button id="logout-btn" disabled>Logout</button>
+    </div>
+  </div>
+  
+  <script type="module">
+    // Import the Keysako Identity library
+    import { TokenManager } from '../../packages/core/dist/index.esm.js';
+    
+    // Get DOM elements
+    const authStatus = document.getElementById('auth-status');
+    const tokenInfo = document.getElementById('token-info');
+    const getTokenBtn = document.getElementById('get-token-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const keysakoButton = document.getElementById('keysako-button');
+    
+    // Get token manager instance
+    const tokenManager = TokenManager.getInstance();
+    
+    // Check initial authentication status
+    updateAuthStatus();
+    
+    // Add event listeners
+    keysakoButton.addEventListener('keysako:auth_complete', handleAuthComplete);
+    window.addEventListener('keysako:tokens_updated', updateAuthStatus);
+    window.addEventListener('keysako:tokens_cleared', updateAuthStatus);
+    getTokenBtn.addEventListener('click', displayTokenInfo);
+    logoutBtn.addEventListener('click', logout);
+    
+    // Handle authentication completion
+    function handleAuthComplete(event) {
+      const { success, token, hasRequiredAge, error } = event.detail;
+      
+      if (success) {
+        console.log('Authentication successful:', token);
+        authStatus.textContent = 'Authenticated';
+        authStatus.style.color = 'green';
+      } else {
+        console.error('Authentication failed:', error);
+        authStatus.textContent = `Authentication failed: ${error}`;
+        authStatus.style.color = 'red';
+      }
+      
+      updateAuthStatus();
+    }
+    
+    // Update authentication status
+    function updateAuthStatus() {
+      const isAuthenticated = tokenManager.hasValidAccessToken();
+      
+      if (isAuthenticated) {
+        authStatus.textContent = 'Authenticated';
+        authStatus.style.color = 'green';
+        getTokenBtn.disabled = false;
+        logoutBtn.disabled = false;
+      } else {
+        authStatus.textContent = 'Not authenticated';
+        authStatus.style.color = 'gray';
+        tokenInfo.textContent = 'No token available';
+        getTokenBtn.disabled = true;
+        logoutBtn.disabled = true;
+      }
+    }
+    
+    // Display token information
+    function displayTokenInfo() {
+      const accessToken = tokenManager.getAccessToken();
+      const idToken = tokenManager.getIdToken();
+      const claims = tokenManager.getTokenClaims();
+      
+      tokenInfo.textContent = JSON.stringify({
+        accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
+        idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
+        claims
+      }, null, 2);
+    }
+    
+    // Logout
+    function logout() {
+      tokenManager.clearTokens();
+      updateAuthStatus();
+    }
+  </script>
+</body>
+</html>

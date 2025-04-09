@@ -1,238 +1,258 @@
-# Keysako Connect
+# Keysako Identity
 
-A simple and customizable authentication button for Keysako identity provider.
+A multi-framework authentication library for integrating with Keysako identity provider. This library provides authentication buttons and utilities for various JavaScript frameworks.
+
+## Packages
+
+This monorepo contains the following packages:
+
+- `@keysako-identity/core`: Core functionality that powers all framework implementations
+- `@keysako-identity/react`: React components for Keysako authentication
+- `@keysako-identity/vue`: Vue components for Keysako authentication
 
 ## Installation
 
-### Via NPM
+### Core Package (Vanilla JS)
 
 ```bash
-npm install keysako-identity
+npm install @keysako-identity/core
 ```
+
+### React
+
+```bash
+npm install @keysako-identity/react
+```
+
+### Vue
+
+```bash
+npm install @keysako-identity/vue
+```
+
+## Usage
+
+### Core Package (Vanilla JS / Web Components)
+
+```html
+<script type="module">
+  import { KeysakoButton } from '@keysako-identity/core';
+  
+  // Register the custom element if it hasn't been registered yet
+  if (!customElements.get('keysako-connect')) {
+    customElements.define('keysako-connect', KeysakoButton);
+  }
+</script>
+
+<keysako-connect
+  client-id="your-client-id"
+  redirect-uri="your-redirect-uri">
+</keysako-connect>
+```
+
+### React
+
+```jsx
+import { KeysakoButton, KeysakoProvider } from '@keysako-identity/react';
+
+// Using the button directly
+function LoginPage() {
+  return (
+    <KeysakoButton
+      clientId="your-client-id"
+      redirectUri="your-redirect-uri"
+      theme="default"
+      onSuccess={(result) => console.log('Success:', result)}
+      onError={(error) => console.error('Error:', error)}
+    />
+  );
+}
+
+// Using the provider for app-wide authentication
+function App() {
+  return (
+    <KeysakoProvider
+      clientId="your-client-id"
+      redirectUri="your-redirect-uri"
+    >
+      <YourApp />
+    </KeysakoProvider>
+  );
+}
+
+// Using the hook in components
+import { useKeysako } from '@keysako-identity/react';
+
+function Profile() {
+  const { isAuthenticated, login, logout } = useKeysako();
+  
+  return (
+    <div>
+      {isAuthenticated ? (
+        <div>
+          <h1>Welcome to your profile</h1>
+          <button onClick={logout}>Sign out</button>
+        </div>
+      ) : (
+        <div>
+          <h1>Please sign in</h1>
+          <button onClick={login}>Sign in</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Vue
+
+```vue
+<template>
+  <div>
+    <!-- Using the button directly -->
+    <KeysakoButton
+      client-id="your-client-id"
+      redirect-uri="your-redirect-uri"
+      theme="default"
+      @success="handleSuccess"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { KeysakoButton, createKeysako } from '@keysako-identity/vue';
+
+// Using the composable for authentication
+const keysako = createKeysako({
+  clientId: 'your-client-id',
+  redirectUri: 'your-redirect-uri'
+});
+
+// Access authentication state and methods
+const { isAuthenticated, login, logout } = keysako;
+
+// Set up callbacks
+keysako.onSuccess((result) => {
+  console.log('Authentication successful:', result);
+});
+
+keysako.onError((error) => {
+  console.error('Authentication failed:', error);
+});
+
+// Event handlers for the button
+function handleSuccess(result) {
+  console.log('Button success:', result);
+}
+
+function handleError(error) {
+  console.error('Button error:', error);
+}
+</script>
+```
+
+## Configuration Options
+
+### Button Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `clientId` | string | required | Your Keysako client ID |
+| `redirectUri` | string | window.location.origin | The URI where users will be redirected after authentication |
+| `theme` | string | 'default' | Button theme: 'default', 'light', or 'dark' |
+| `shape` | string | 'rounded' | Button shape: 'rounded' or 'sharp' |
+| `logoOnly` | boolean | false | Display only the logo without text |
+| `usePopup` | boolean | false | Use popup mode for authentication |
+| `age` | number | - | Age verification requirement |
+| `locale` | string | - | Force a specific language (overrides browser language) |
+
+### Events
+
+The button emits the following events:
+
+| Event | Description | Data |
+|-------|-------------|------|
+| `success` | Fired when authentication is successful | `{ success: true, token?: string, hasRequiredAge?: boolean }` |
+| `error` | Fired when authentication fails | `{ error: string, details?: any }` |
+
+### Environment Variables
+
+You can configure the identity server URI using environment variables:
+
+#### Vite.js
+```
+# .env file
+VITE_KEYSAKO_IDENTITY_SERVER_URI=https://auth.keysako.com
+```
+
+#### Create React App
+```
+# .env file
+REACT_APP_KEYSAKO_IDENTITY_SERVER_URI=https://auth.keysako.com
+```
+
+#### Direct Browser Access
+```javascript
+// Set before loading the library
+window.ENV_KEYSAKO_IDENTITY_SERVER_URI = 'https://auth.keysako.com';
+```
+
+This allows you to use different server endpoints for development, staging, and production environments without modifying the code.
+
+## Advanced Usage
+
+### Custom Styling
+
+You can customize the button appearance using CSS variables:
+
+```css
+keysako-connect, .keysako-button {
+  --keysako-btn-bg: #4285f4;
+  --keysako-btn-color: white;
+  --keysako-btn-border: none;
+  --keysako-btn-hover-bg: #3367d6;
+  --keysako-btn-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --keysako-btn-radius: 4px;
+  --keysako-badge-bg: #202124;
+  --keysako-badge-color: white;
+}
+```
+
+### Token Management
+
+The library provides utilities for token management:
 
 ```javascript
-// ESM
-import 'keysako-identity';
+import { TokenManager } from '@keysako-identity/core';
 
-// CommonJS
-require('keysako-identity');
-```
+const tokenManager = TokenManager.getInstance();
 
-### Via CDN
+// Check if user is authenticated
+const isAuthenticated = tokenManager.isAuthenticated();
 
-For UMD (Universal Module Definition):
+// Get access token
+const accessToken = tokenManager.getAccessToken();
 
-Basic usage:
-```html
-<script src="https://cdn.keysako.com/v1/keysako-connect.min.js"></script>
-```
+// Get ID token
+const idToken = tokenManager.getIdToken();
 
-Recommended secure usage:
-```html
-<script 
-    src="https://cdn.keysako.com/v1/keysako-connect.min.js"
-    integrity="sha384-${{ env.CDN_HASH }}"
-    crossorigin="anonymous">
-</script>
-```
+// Get token claims
+const claims = tokenManager.getTokenClaims();
 
-For ES Module:
-
-Basic usage:
-```html
-<script type="module" src="https://cdn.keysako.com/v1/keysako-connect.esm.js"></script>
-```
-
-Recommended secure usage:
-```html
-<script 
-    type="module" 
-    src="https://cdn.keysako.com/v1/keysako-connect.esm.js"
-    integrity="sha384-${{ env.CDN_HASH }}"
-    crossorigin="anonymous">
-</script>
-```
-
-### Security Best Practices
-
-While the `integrity` and `crossorigin` attributes are optional, we strongly recommend using them:
-
-- `integrity`: Ensures the file hasn't been tampered with by verifying its hash
-- `crossorigin="anonymous"`: Ensures proper CORS handling when loading the script from our CDN
-
-### Verifying Package Integrity
-
-Each release includes a `checksums.txt` file containing SHA-384 hashes for all distributed files. You can find these files in:
-- The npm package under `dist/v1/checksums.txt`
-- The CDN at `https://cdn.keysako.com/v1/checksums.txt`
-- The GitHub release assets
-
-To verify a file's integrity:
-1. Download the file you want to verify
-2. Calculate its SHA-384 hash:
-```bash
-cat filename | openssl dgst -sha384 -binary | openssl base64 -A
-```
-3. Compare the result with the hash in `checksums.txt`
-
-## Basic Usage
-
-```html
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri">
-</keysako-connect>
-```
-
-## Attributes
-
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `client-id` | string | required | Your Keysako client ID |
-| `redirect-uri` | string | required | The URI where users will be redirected after authentication |
-| `theme` | string | 'default' | Button theme: 'default', 'light', or 'dark' |
-| `age` | string | - | Display an age badge on the button (e.g., "18" for 18+) |
-| `shape` | string | 'rounded' | Button shape: 'rounded' or 'sharp' |
-| `logo-only` | boolean | false | Display only the logo without text |
-| `popup` | boolean | false | Use popup mode for authentication |
-| `callback` | string | - | Name of the callback function to handle authentication results |
-| `lang` | string | - | Force a specific language (overrides browser language) |
-
-## Events
-
-The button emits the following custom events:
-
-| Event Name | Description | Detail |
-|------------|-------------|---------|
-| `keysako:auth_complete` | Fired when authentication is complete | `{ success: boolean, token?: string, hasRequiredAge?: boolean, error?: string }` |
-| `keysako:tokens_updated` | Fired when tokens are updated | `{ token: string }` |
-| `keysako:tokens_cleared` | Fired when tokens are cleared | - |
-
-### Handling Events
-
-You can listen to these events in two ways:
-
-1. Using the `callback` attribute:
-```html
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri"
-    callback="handleAuth">
-</keysako-connect>
-
-<script>
-function handleAuth(response) {
-    if (response.success) {
-        console.log('Authentication successful:', response.data);
-        if (response.hasRequiredAge) {
-            console.log('Age requirement met');
-        }
-    } else {
-        console.error('Authentication failed:', response.error);
-    }
-}
-</script>
-```
-
-2. Using event listeners:
-```html
-<keysako-connect
-    id="keysako-button"
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri">
-</keysako-connect>
-
-<script>
-const button = document.getElementById('keysako-button');
-
-button.addEventListener('keysako:auth_complete', (event) => {
-    const { success, token, hasRequiredAge, error } = event.detail;
-    if (success) {
-        console.log('Authentication successful:', token);
-    } else {
-        console.error('Authentication failed:', error);
-    }
-});
-
-button.addEventListener('keysako:tokens_updated', (event) => {
-    console.log('Token updated:', event.detail.token);
-});
-
-button.addEventListener('keysako:tokens_cleared', () => {
-    console.log('Tokens cleared');
-});
-</script>
-```
-
-## Examples
-
-### Basic Authentication Button
-```html
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri">
-</keysako-connect>
-```
-
-### Customized Button
-```html
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri"
-    theme="light"
-    age="18"
-    shape="sharp"
-    logo-only>
-</keysako-connect>
-```
-
-### With Callback
-```html
-<keysako-connect
-    client-id="your-client-id"
-    redirect-uri="your-redirect-uri"
-    callback="handleAuth">
-</keysako-connect>
-
-<script>
-function handleAuth(response) {
-    if (response.success) {
-        console.log('Authentication successful:', response.data);
-    } else {
-        console.error('Authentication failed:', response.error);
-    }
-}
-</script>
+// Clear tokens (logout)
+tokenManager.clearTokens();
 ```
 
 ## Browser Support
 
-The library is compatible with all modern browsers that support Web Components:
-- Chrome
-- Firefox
-- Safari
-- Edge
+This library supports all modern browsers:
 
-## Development
-
-To build the library locally:
-
-1. Clone the repository
-```bash
-git clone https://github.com/keysako/keysako-js.git
-cd keysako-js
-```
-
-2. Install dependencies
-```bash
-npm install
-```
-
-3. Build the library
-```bash
-npm run build
-```
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1744194915902" clover="3.2.0">
+  <project timestamp="1744194915902" name="All files">
+    <metrics statements="77" coveredstatements="0" conditionals="24" coveredconditionals="0" methods="23" coveredmethods="0" elements="124" coveredelements="0" complexity="0" loc="77" ncloc="77" packages="1" files="4" classes="4"/>
+    <file name="KeysakoButton.ts" path="C:\Users\lord_\Repos\keysako-js\packages\vue\src\KeysakoButton.ts">
+      <metrics statements="27" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <line num="1" count="0" type="stmt"/>
+      <line num="2" count="0" type="stmt"/>
+      <line num="8" count="0" type="stmt"/>
+      <line num="50" count="0" type="stmt"/>
+      <line num="57" count="0" type="stmt"/>
+      <line num="58" count="0" type="stmt"/>
+      <line num="60" count="0" type="stmt"/>
+      <line num="61" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="64" count="0" type="stmt"/>
+      <line num="67" count="0" type="stmt"/>
+      <line num="77" count="0" type="stmt"/>
+      <line num="80" count="0" type="stmt"/>
+      <line num="85" count="0" type="stmt"/>
+      <line num="86" count="0" type="stmt"/>
+      <line num="89" count="0" type="stmt"/>
+      <line num="90" count="0" type="stmt"/>
+      <line num="93" count="0" type="stmt"/>
+      <line num="94" count="0" type="stmt"/>
+      <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="96" count="0" type="stmt"/>
+      <line num="98" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="102" count="0" type="stmt"/>
+      <line num="105" count="0" type="stmt"/>
+      <line num="106" count="0" type="stmt"/>
+      <line num="109" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="110" count="0" type="stmt"/>
+      <line num="115" count="0" type="stmt"/>
+    </file>
+    <file name="createKeysako.ts" path="C:\Users\lord_\Repos\keysako-js\packages\vue\src\createKeysako.ts">
+      <metrics statements="43" coveredstatements="0" conditionals="17" coveredconditionals="0" methods="12" coveredmethods="0"/>
+      <line num="1" count="0" type="stmt"/>
+      <line num="2" count="0" type="stmt"/>
+      <line num="10" count="0" type="stmt"/>
+      <line num="11" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="13" count="0" type="stmt"/>
+      <line num="14" count="0" type="stmt"/>
+      <line num="15" count="0" type="stmt"/>
+      <line num="18" count="0" type="stmt"/>
+      <line num="19" count="0" type="stmt"/>
+      <line num="21" count="0" type="stmt"/>
+      <line num="23" count="0" type="stmt"/>
+      <line num="25" count="0" type="stmt"/>
+      <line num="31" count="0" type="stmt"/>
+      <line num="33" count="0" type="cond" truecount="0" falsecount="4"/>
+      <line num="34" count="0" type="stmt"/>
+      <line num="35" count="0" type="cond" truecount="0" falsecount="3"/>
+      <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="42" count="0" type="stmt"/>
+      <line num="45" count="0" type="stmt"/>
+      <line num="46" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="47" count="0" type="stmt"/>
+      <line num="51" count="0" type="stmt"/>
+      <line num="52" count="0" type="stmt"/>
+      <line num="55" count="0" type="stmt"/>
+      <line num="56" count="0" type="stmt"/>
+      <line num="59" count="0" type="stmt"/>
+      <line num="60" count="0" type="stmt"/>
+      <line num="61" count="0" type="stmt"/>
+      <line num="68" count="0" type="stmt"/>
+      <line num="69" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="70" count="0" type="stmt"/>
+      <line num="77" count="0" type="stmt"/>
+      <line num="78" count="0" type="cond" truecount="0" falsecount="1"/>
+      <line num="79" count="0" type="stmt"/>
+      <line num="87" count="0" type="stmt"/>
+      <line num="88" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="95" count="0" type="stmt"/>
+      <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="103" count="0" type="stmt"/>
+      <line num="104" count="0" type="stmt"/>
+      <line num="111" count="0" type="stmt"/>
+      <line num="112" count="0" type="stmt"/>
+      <line num="115" count="0" type="stmt"/>
+    </file>
+    <file name="index.ts" path="C:\Users\lord_\Repos\keysako-js\packages\vue\src\index.ts">
+      <metrics statements="7" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="3" coveredmethods="0"/>
+      <line num="2" count="0" type="stmt"/>
+      <line num="3" count="0" type="stmt"/>
+      <line num="6" count="0" type="stmt"/>
+      <line num="7" count="0" type="stmt"/>
+      <line num="8" count="0" type="stmt"/>
+      <line num="11" count="0" type="stmt"/>
+      <line num="13" count="0" type="stmt"/>
+    </file>
+    <file name="vue-shims.d.ts" path="C:\Users\lord_\Repos\keysako-js\packages\vue\src\vue-shims.d.ts">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+    </file>
+  </project>
+</coverage>

@@ -1,0 +1,157 @@
+:root {
+  --primary-color: #646cff;
+  --primary-hover: #535bf2;
+  --text-light: #213547;
+  --text-dark: #f9f9f9;
+  --bg-light: #ffffff;
+  --bg-dark: #242424;
+  --border-light: #e2e8f0;
+  --border-dark: #4a5568;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.app.light {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.app.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.theme-toggle button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.app.light .theme-toggle button {
+  background-color: #f1f5f9;
+  color: var(--text-light);
+}
+
+.app.dark .theme-toggle button {
+  background-color: #2d3748;
+  color: var(--text-dark);
+}
+
+.theme-toggle button.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.button-example {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app.light .button-example {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-light);
+}
+
+.app.dark .button-example {
+  background-color: #1a202c;
+  border: 1px solid var(--border-dark);
+}
+
+.user-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.app.light .user-info {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-light);
+}
+
+.app.dark .user-info {
+  background-color: #1a202c;
+  border: 1px solid var(--border-dark);
+}
+
+pre {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow: auto;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+.logout-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}

@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@keysako-identity/core": ["../../packages/core/src"],
+      "@keysako-identity/react": ["../../packages/react/src"]
+    }
+  }
+}

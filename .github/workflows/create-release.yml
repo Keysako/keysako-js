@@ -1,0 +1,106 @@
+name: Create GitHub Release
+
+on:
+  workflow_run:
+    workflows: ["Publish to NPM"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (optional)'
+        required: false
+        type: string
+
+jobs:
+  build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    uses: ./.github/workflows/build-and-test.yml
+
+  create-github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: .
+
+      - name: Get version
+        id: get_version
+        run: |
+          VERSION=${{ needs.build.outputs.version }}
+          MAJOR_VERSION=${{ needs.build.outputs.major_version }}
+          if [ -z "$VERSION" ]; then
+            VERSION=$(node -p "require('./package.json').version")
+            MAJOR_VERSION=$(echo $VERSION | cut -d. -f1)
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate SHA-384 hash for CDN files
+        id: generate_hash
+        run: |
+          HASH=$(openssl dgst -sha384 -binary dist/keysako-connect.min.js | openssl base64 -A)
+          echo "CDN_HASH=$HASH" >> $GITHUB_ENV
+
+      - name: Create Release Notes
+        id: release_notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "## Keysako Identity v${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "### Packages" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "- @keysako-identity/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "- @keysako-identity/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "- @keysako-identity/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "### Installation" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "#### NPM" >> $GITHUB_ENV
+          echo "```bash" >> $GITHUB_ENV
+          echo "# Core package" >> $GITHUB_ENV
+          echo "npm install @keysako-identity/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "# React package" >> $GITHUB_ENV
+          echo "npm install @keysako-identity/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "# Vue package" >> $GITHUB_ENV
+          echo "npm install @keysako-identity/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "```" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "#### CDN" >> $GITHUB_ENV
+          echo "```html" >> $GITHUB_ENV
+          echo "<script" >> $GITHUB_ENV
+          echo "    src=\"https://cdn.keysako.com/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect.min.js\"" >> $GITHUB_ENV
+          echo "    integrity=\"sha384-${{ env.CDN_HASH }}\"" >> $GITHUB_ENV
+          echo "    crossorigin=\"anonymous\"></script>" >> $GITHUB_ENV
+          echo "```" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          files: |
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.min.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.min.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.js
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/keysako-connect-${{ steps.get_version.outputs.VERSION }}.js.map
+            dist/v${{ steps.get_version.outputs.MAJOR_VERSION }}/checksums.txt
+          body: ${{ env.RELEASE_NOTES }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
