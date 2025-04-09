@@ -84,7 +84,7 @@ You can also try our [online configurator](https://cdn.keysako.com/configurator.
 ### React
 
 ```jsx
-import { KeysakoButton, KeysakoProvider } from '@keysako-identity/react';
+import { KeysakoButton } from '@keysako-identity/react';
 
 // Using the button directly
 function LoginPage() {
@@ -99,7 +99,7 @@ function LoginPage() {
   );
 }
 
-// Using the provider for app-wide authentication
+// Example with application state management
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authResult, setAuthResult] = useState(null);
@@ -117,34 +117,29 @@ function App() {
   };
   
   return (
-    <KeysakoProvider
-      clientId="your-client-id"
-      redirectUri="your-redirect-uri"
-    >
-      <div>
-        {isAuthenticated ? (
-          <div>
-            <h1>Welcome to your profile</h1>
-            <button onClick={() => {
-              // Use TokenManager to clear tokens and update state
-              const tokenManager = TokenManager.getInstance();
-              tokenManager.clearTokens();
-              setIsAuthenticated(false);
-            }}>Sign out</button>
-          </div>
-        ) : (
-          <div>
-            <h1>Please sign in</h1>
-            <KeysakoButton
-              clientId="your-client-id"
-              redirectUri="your-redirect-uri"
-              onSuccess={handleSuccess}
-              onError={handleError}
-            />
-          </div>
-        )}
-      </div>
-    </KeysakoProvider>
+    <div>
+      {isAuthenticated ? (
+        <div>
+          <h1>Welcome to your profile</h1>
+          <button onClick={() => {
+            // Use TokenManager to clear tokens and update state
+            const tokenManager = TokenManager.getInstance();
+            tokenManager.clearTokens();
+            setIsAuthenticated(false);
+          }}>Sign out</button>
+        </div>
+      ) : (
+        <div>
+          <h1>Please sign in</h1>
+          <KeysakoButton
+            clientId="your-client-id"
+            redirectUri="your-redirect-uri"
+            onSuccess={handleSuccess}
+            onError={handleError}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 ```

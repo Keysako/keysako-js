@@ -1,42 +1,42 @@
 # Keysako Identity - React Example
 
-Cet exemple montre comment intégrer la bibliothèque Keysako Identity dans une application React construite avec Vite.js.
+This example shows how to integrate the Keysako Identity library into a React application built with Vite.js.
 
-## Fonctionnalités
+## Features
 
-- Authentification avec Keysako Identity Provider
-- Différentes variantes du bouton d'authentification
-- Thèmes clair et sombre
-- Configuration via variables d'environnement
+- Authentication with Keysako Identity Provider
+- Different variants of the authentication button
+- Light and dark themes
+- Configuration via environment variables
 
 ## Installation
 
 ```bash
-# Installer les dépendances
+# Install dependencies
 npm install
 ```
 
 ## Configuration
 
-Créez un fichier `.env` à la racine du projet pour configurer l'URI du serveur d'identité :
+Create an `.env` file at the root of the project to configure the identity server URI:
 
 ```
 # .env
 VITE_KEYSAKO_IDENTITY_SERVER_URI=https://auth.keysako.com
 ```
 
-## Développement
+## Development
 
 ```bash
-# Lancer le serveur de développement
+# Start the development server
 npm run dev
 ```
 
-L'application sera disponible à l'adresse [http://localhost:5173](http://localhost:5173).
+The application will be available at [http://localhost:5173](http://localhost:5173).
 
-## Exemples d'utilisation
+## Usage Examples
 
-### Bouton d'authentification standard
+### Standard Authentication Button
 
 ```jsx
 <KeysakoButton 
@@ -46,7 +46,7 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 />
 ```
 
-### Bouton avec vérification d'âge
+### Button with Age Verification
 
 ```jsx
 <KeysakoButton 
@@ -57,7 +57,7 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 />
 ```
 
-### Bouton avec popup
+### Button with Popup
 
 ```jsx
 <KeysakoButton 
@@ -68,7 +68,7 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 />
 ```
 
-### Bouton avec logo uniquement
+### Logo-Only Button
 
 ```jsx
 <KeysakoButton 
@@ -79,24 +79,11 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 />
 ```
 
-## Utilisation du Provider
-
-Le `KeysakoProvider` permet de gérer l'état d'authentification au niveau de l'application :
-
-```jsx
-<KeysakoProvider
-  clientId="your-client-id"
-  redirectUri={window.location.origin}
->
-  <App />
-</KeysakoProvider>
-```
-
-## Build de production
+## Production Build
 
 ```bash
-# Créer un build de production
+# Create a production build
 npm run build
 ```
 
-Les fichiers de production seront générés dans le dossier `dist`.
+The production files will be generated in the `dist` folder.

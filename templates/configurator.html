@@ -6,6 +6,37 @@
     <title>Keysako Button Configurator</title>
     <!-- Charger le script UMD qui expose les fonctionnalités via window["keysako-connect"] -->
     <script src="./v{{ MAJOR_VERSION }}/keysako-connect.min.js"></script>
+    
+    <!-- Script pour définir immédiatement le composant web personnalisé -->
+    <script>
+        // Fonction pour enregistrer le composant en utilisant la fonction fournie par la bibliothèque
+        function registerComponent() {
+            if (typeof window["keysako-connect"] !== 'undefined') {
+                if (window["keysako-connect"].registerKeysakoConnectElement) {
+                    window["keysako-connect"].registerKeysakoConnectElement();
+                    console.log('Composant keysako-connect enregistré avec succès');
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Essayer d'enregistrer immédiatement
+        if (!registerComponent()) {
+            // Si ça ne fonctionne pas, attendre que le script soit chargé
+            const interval = setInterval(function() {
+                if (registerComponent()) {
+                    clearInterval(interval);
+                }
+            }, 100);
+            
+            // Arrêter de vérifier après 5 secondes
+            setTimeout(function() {
+                clearInterval(interval);
+            }, 5000);
+        }
+    </script>
+    
     <style>
         :root {
             --primary-color: #2563eb;
@@ -310,21 +341,21 @@
                 <!-- Le bouton sera inséré ici par JavaScript -->
             </div>
 
+            <div class="preview-container" ><keysako-connect
+    client-id="dfbdf"
+    redirect-uri="http://localhost:3000/callback"
+    theme="dark"
+    locale="tr"></keysako-connect>
+</div>
             <h2>Code</h2>
             <div class="code-section">
                 <pre><code id="codeExample"></code></pre>
                 <button class="copy-button" onclick="copyCode()">Copy Code</button>
             </div>
-
-            <keysako-connect
-    client-id="demo-client-id"
-    redirect-uri="http://localhost:3000/callback"></keysako-connect>
         </div>
     </div>
 
     <script>
-        console.log('Script chargé');
-        console.log('window["keysako-connect"]:', window["keysako-connect"]);
         
         // Show/hide callback name field based on checkbox
         document.getElementById('use-callback').addEventListener('change', function() {
@@ -356,12 +387,10 @@
                     console.warn('keysako-connect n\'est pas disponible. Réessai dans 500ms...');
                     setTimeout(() => updatePreview(), 500);
                     return null;
-                }
-                
+                }               
                 // Créer l'instance du bouton Keysako en utilisant la classe KeysakoButton
                 const KeysakoButton = window["keysako-connect"].KeysakoButton;
                 if (!KeysakoButton) {
-                    console.warn('KeysakoButton n\'est pas disponible dans window["keysako-connect"]:', window["keysako-connect"]);
                     setTimeout(() => updatePreview(), 500);
                     return null;
                 }
@@ -388,9 +417,6 @@
                 // Créer l'instance du bouton
                 const keysakoButton = new KeysakoButton(options);
                 
-                // Créer l'élément DOM du bouton
-                const buttonElement = keysakoButton.createButtonElement();
-                
                 // Ajouter les styles au document s'ils n'existent pas déjà
                 if (!document.getElementById('keysako-styles')) {
                     const styleElement = document.createElement('style');
@@ -399,6 +425,9 @@
                     document.head.appendChild(styleElement);
                 }
                 
+                // Créer l'élément DOM du bouton
+                const buttonElement = keysakoButton.createButtonElement();
+                
                 return buttonElement;
             } catch (error) {
                 console.error('Erreur lors de la création du bouton:', error);
@@ -406,7 +435,7 @@
             }
         }
 
-        function updatePreview() {
+        function updatePreview() {            
             const clientId = document.getElementById('clientId').value || 'demo-client-id';
             const redirectUri = document.getElementById('redirectUri').value || window.location.origin + '/callback';
             const theme = document.getElementById('theme').value;
@@ -421,7 +450,7 @@
             const previewContainer = document.getElementById('preview-container');
             previewContainer.innerHTML = '';
             
-            // Créer le bouton avec l'API KeysakoButton
+            // Créer le bouton avec l'API KeysakoButton directement
             const buttonOptions = {
                 clientId: clientId,
                 redirectUri: redirectUri,
@@ -460,8 +489,6 @@
 
         function updateCodeExample(clientId, redirectUri, theme, shape, age, popup, logoOnly, useCallback, callbackName, language) {
             let code = '<script src="https://cdn.keysako.com/v{{ MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ CDN_HASH }}" crossorigin="anonymous"><\/script>\n\n';
-            
-            // Générer le code pour le composant web personnalisé (même s'il n'est pas encore disponible)
             code += '<keysako-connect';
             if (clientId) code += `\n    client-id="${clientId}"`;
             if (redirectUri) code += `\n    redirect-uri="${redirectUri}"`;
@@ -473,36 +500,6 @@
             if (useCallback && callbackName) code += `\n    callback="${callbackName}"`;
             if (language) code += `\n    locale="${language}"`;
             code += '></keysako-connect>';
-            
-            // Ajouter une alternative avec l'API JavaScript
-            code += '\n\n<!-- Alternative avec l\'API JavaScript -->\n';
-            code += '<script>\n';
-            code += 'document.addEventListener("DOMContentLoaded", function() {\n';
-            code += '    // Créer le bouton Keysako\n';
-            code += `    const button = new KeysakoIdentity.KeysakoButton({\n`;
-            code += `        clientId: "${clientId || 'YOUR_CLIENT_ID'}",\n`;
-            if (redirectUri) code += `        redirectUri: "${redirectUri}",\n`;
-            if (theme !== 'default') code += `        theme: "${theme}",\n`;
-            if (shape !== 'rounded') code += `        shape: "${shape}",\n`;
-            if (age) code += `        age: ${age},\n`;
-            if (popup) code += `        usePopup: true,\n`;
-            if (logoOnly) code += `        logoOnly: true,\n`;
-            if (language) code += `        locale: "${language}",\n`;
-            
-            if (useCallback && callbackName) {
-                code += `        onSuccess: ${callbackName},\n`;
-                code += `        onError: function(error) {\n`;
-                code += `            console.error("Authentication error:", error);\n`;
-                code += `        }\n`;
-            }
-            
-            code += '    });\n\n';
-            code += '    // Ajouter le bouton au DOM\n';
-            code += '    const buttonElement = button.createButtonElement();\n';
-            code += '    document.getElementById("keysako-container").appendChild(buttonElement);\n';
-            code += '});\n';
-            code += '<\/script>\n\n';
-            code += '<div id="keysako-container"></div>';
 
             if (useCallback && callbackName) {
                 code += `\n\n<script>\nfunction ${callbackName}(result) {\n    console.log('Authentication result:', result);\n}\n<\/script>`;
@@ -543,11 +540,26 @@
 
         // Initialize the preview and code on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOMContentLoaded');
-            console.log('window["keysako-connect"] après DOMContentLoaded:', window["keysako-connect"]);
-            
             // Initialiser la prévisualisation
             updatePreview();
+            
+            // Si le script n'est pas encore chargé, vérifier régulièrement
+            if (!window["keysako-connect"] || !window["keysako-connect"].KeysakoButton) {
+                const checkInterval = setInterval(function() {
+                    if (window["keysako-connect"] && window["keysako-connect"].KeysakoButton) {
+                        // Mettre à jour la prévisualisation
+                        updatePreview();
+                        
+                        // Arrêter de vérifier
+                        clearInterval(checkInterval);
+                    }
+                }, 500);
+                
+                // Arrêter de vérifier après 10 secondes
+                setTimeout(function() {
+                    clearInterval(checkInterval);
+                }, 10000);
+            }
         });
     </script>
 </body>

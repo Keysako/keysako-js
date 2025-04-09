@@ -43,7 +43,7 @@ export class KeysakoConnectElement extends HTMLElement {
       'logo-only',
       'use-popup',
       'locale',
-      'callback'
+      'callback',
     ];
   }
 
@@ -94,7 +94,7 @@ export class KeysakoConnectElement extends HTMLElement {
         age,
         logoOnly,
         usePopup,
-        locale: locale || undefined
+        locale: locale || undefined,
       };
 
       // Add callback if specified
@@ -142,12 +142,12 @@ export class KeysakoConnectElement extends HTMLElement {
       errorElement.style.border = '1px solid red';
       errorElement.style.borderRadius = '4px';
       errorElement.textContent = 'Error initializing Keysako button';
-      
+
       // Clear shadow DOM
       while (this._shadow.firstChild) {
         this._shadow.removeChild(this._shadow.firstChild);
       }
-      
+
       this._shadow.appendChild(errorElement);
     }
   }
