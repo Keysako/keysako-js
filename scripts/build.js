@@ -121,7 +121,7 @@ async function build() {
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.KeysakoIdentity = {}));
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["keysako-connect"] = {}));
 })(this, (function (exports) { 'use strict';
     ${minified.code.replace(/export\s*\{[^}]*\};?/g, '')}
     
@@ -129,9 +129,20 @@ async function build() {
     exports.KeysakoButton = KeysakoButton;
     exports.TokenManager = TokenManager;
     exports.IdentityProvider = IdentityProvider;
+    exports.KeysakoConnectElement = KeysakoConnectElement;
+    exports.registerKeysakoConnectElement = registerKeysakoConnectElement;
     exports.logoSvg = logoSvg;
     exports.parseJwt = parseJwt;
     exports.isMobileDevice = isMobileDevice;
+    
+    // Enregistrer automatiquement le composant Web personnalisé
+    if (typeof window !== 'undefined') {
+        if (typeof registerKeysakoConnectElement === 'function') {
+            registerKeysakoConnectElement();
+        } else {
+            console.warn('registerKeysakoConnectElement is not available');
+        }
+    }
     
     Object.defineProperty(exports, '__esModule', { value: true });
 }));`;
@@ -161,7 +172,7 @@ async function build() {
         const esmCode = `${esmMinified.code.replace(/export\s*\{[^}]*\};?/g, '')}
 
 // Exports explicites
-export { KeysakoButton, TokenManager, IdentityProvider, logoSvg, parseJwt, isMobileDevice };`;
+export { KeysakoButton, TokenManager, IdentityProvider, KeysakoConnectElement, registerKeysakoConnectElement, logoSvg, parseJwt, isMobileDevice };`;
 
         // Write ESM files
         await writeFiles(esmCode, esmMinified.map, 'esm', version, majorVersion);
