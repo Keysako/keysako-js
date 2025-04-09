@@ -1,21 +1,21 @@
 {
   "name": "keysako-identity",
   "version": "1.0.6",
-  "description": "A simple library for integrating authentication with various identity providers",
+  "description": "Keysako Identity Sign-in buttons",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-  "main": "dist/keysako-connect.min.js",
+  "main": "dist/keysako-connect.js",
   "module": "dist/keysako-connect.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/keysako-connect.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build:ts": "tsc",
-    "build:bundle": "node build.js",
-    "build": "npm run build:ts && npm run build:bundle",
+    "build:bundle": "node scripts/build.js",
+    "build": "npm run build:ts && npm run build:bundle && node scripts/prepare-cdn.js",
     "build:cdn": "node scripts/prepare-cdn.js",
     "test": "npm run test --workspaces",
     "test:core": "npm run test --workspace=@keysako-identity/core",

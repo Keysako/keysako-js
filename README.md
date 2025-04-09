@@ -30,6 +30,37 @@ npm install @keysako-identity/react
 npm install @keysako-identity/vue
 ```
 
+### CDN Usage
+
+You can also use Keysako Identity directly from our CDN:
+
+```html
+<script src="https://cdn.keysako.com/v1/keysako-connect.min.js" integrity="sha384-HbjF36XR1u6I0gJAqft5diuu5YR7wOEjFbSk841DhsQ47NRwb18iXDIdEssJYhSY" crossorigin="anonymous"></script>
+```
+
+## Examples
+
+We provide several examples to help you get started quickly:
+
+- **[Vue Example](./examples/vue/)**: A complete Vue.js application using Vite.js that demonstrates authentication flow
+- **[React Example](./examples/react/)**: A React application showing how to integrate Keysako authentication
+- **[Vanilla JS Example](./examples/vanilla/)**: A simple HTML/JS example without any framework
+
+To run any example:
+
+```bash
+# Navigate to the example directory
+cd examples/vue
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+You can also try our [online configurator](https://cdn.keysako.com/configurator.html) to customize your button and get the code.
+
 ## Usage
 
 ### Core Package (Vanilla JS / Web Components)
@@ -180,6 +211,8 @@ function handleError(error) {
 | `usePopup` | boolean | false | Use popup mode for authentication |
 | `age` | number | - | Age verification requirement |
 | `locale` | string | - | Force a specific language (overrides browser language) |
+| `onSuccess` | function | - | Callback function for successful authentication |
+| `onError` | function | - | Callback function for authentication errors |
 
 ### Events
 
@@ -230,6 +263,8 @@ keysako-connect, .keysako-button {
   --keysako-btn-radius: 4px;
   --keysako-badge-bg: #202124;
   --keysako-badge-color: white;
+  --keysako-btn-backdrop-filter: none;
+  --keysako-btn-text-shadow: none;
 }
 ```
 
@@ -266,6 +301,49 @@ This library supports all modern browsers:
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
+
+## Development
+
+### Project Structure
+
+```
+keysako-js/
+├── packages/
+│   ├── core/         # Core functionality
+│   ├── react/        # React components
+│   └── vue/          # Vue components
+├── examples/
+│   ├── vanilla/      # Vanilla JS example
+│   ├── react/        # React example
+│   └── vue/          # Vue example
+├── templates/        # Templates for CDN files
+├── scripts/          # Build and utility scripts
+└── dist/             # Generated distribution files
+```
+
+### Building the Library
+
+```bash
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+```
+
+This will:
+1. Compile TypeScript files
+2. Bundle the packages
+3. Generate CDN files with integrity hashes
+4. Create example HTML files
+
+### Versioning
+
+When releasing a new version:
+
+1. Update the version in the root `package.json` and all package-specific `package.json` files
+2. Run `npm run build` to generate new files with updated version numbers
+3. The CDN files will be available in the `dist/` directory
 
 ## License
 

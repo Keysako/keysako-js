@@ -74,6 +74,7 @@ filesToCopy.forEach(file => {
 // Générer les checksums pour les fichiers
 const checksumFile = path.resolve(versionedDir, 'checksums.txt');
 let checksums = '';
+let minJsSha384 = '';
 
 filesToCopy.forEach(file => {
   const versionedFile = path.resolve(versionedDir, file.target);
@@ -83,6 +84,11 @@ filesToCopy.forEach(file => {
     const fileContent = fs.readFileSync(versionedFile);
     const sha384 = crypto.createHash('sha384').update(fileContent).digest('base64');
     checksums += `${file.target} sha384-${sha384}\n`;
+    
+    // Stocker le hash SHA-384 du fichier minifié pour l'utiliser dans les templates
+    if (file.source === 'keysako-connect.min.js') {
+      minJsSha384 = sha384;
+    }
   }
   
   if (fs.existsSync(latestFile)) {
@@ -95,44 +101,54 @@ filesToCopy.forEach(file => {
 fs.writeFileSync(checksumFile, checksums);
 console.log(`Checksums générés dans: ${checksumFile}`);
 
-// Générer un fichier d'exemple HTML
-const exampleHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keysako Identity Example</title>
-</head>
-<body>
-  <h1>Keysako Identity Example</h1>
+// Fonction pour gérer les templates HTML
+function processTemplate(templateName, outputName) {
+  // Lire le template
+  let templateContent = '';
+  const templatePath = path.resolve(__dirname, `../templates/${templateName}`);
+  const templatesDir = path.resolve(__dirname, '../templates');
   
-  <div id="keysako-button-container"></div>
+  // Si le répertoire templates n'existe pas, le créer
+  if (!fs.existsSync(templatesDir)) {
+    fs.mkdirSync(templatesDir, { recursive: true });
+  }
   
-  <script src="./v${majorVersion}/keysako-connect.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const container = document.getElementById('keysako-button-container');
-      const button = KeysakoIdentity.createButton({
-        clientId: 'your-client-id',
-        redirectUri: window.location.origin,
-        theme: 'light'
-      });
+  // Si le fichier template n'existe pas, copier le fichier actuel comme template
+  if (!fs.existsSync(templatePath)) {
+    const currentFilePath = path.resolve(__dirname, `../${templateName}`);
+    if (fs.existsSync(currentFilePath)) {
+      templateContent = fs.readFileSync(currentFilePath, 'utf8');
       
-      container.appendChild(button);
+      // Remplacer les valeurs hardcodées par des placeholders
+      templateContent = templateContent.replace(/https:\/\/cdn\.keysako\.com\/v\d+\/keysako-connect\.min\.js/g, 
+        'https://cdn.keysako.com/v{{ MAJOR_VERSION }}/keysako-connect.min.js');
+      templateContent = templateContent.replace(/<script type="module" src="https:\/\/cdn\.keysako\.com\/v\d+\/keysako-connect\.min\.js".*?><\/script>/g, 
+        '<script type="module" src="https://cdn.keysako.com/v{{ MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ CDN_HASH }}" crossorigin="anonymous"></script>');
       
-      button.addEventListener('success', function(event) {
-        console.log('Authentication successful:', event.detail);
-      });
-      
-      button.addEventListener('error', function(event) {
-        console.error('Authentication failed:', event.detail);
-      });
-    });
-  </script>
-</body>
-</html>`;
+      fs.writeFileSync(templatePath, templateContent);
+      console.log(`Template ${templateName} créé à partir du fichier existant`);
+    } else {
+      console.error(`Erreur: Le fichier ${templateName} n'existe pas à ${currentFilePath}`);
+      return false;
+    }
+  } else {
+    templateContent = fs.readFileSync(templatePath, 'utf8');
+  }
+  
+  // Générer le fichier avec les valeurs actuelles
+  let outputContent = templateContent;
+  outputContent = outputContent.replace(/{{ MAJOR_VERSION }}/g, majorVersion);
+  outputContent = outputContent.replace(/{{ CDN_HASH }}/g, minJsSha384);
+  outputContent = outputContent.replace(/{{ VERSION }}/g, version);
+  
+  fs.writeFileSync(path.resolve(distDir, outputName), outputContent);
+  console.log(`Fichier ${outputName} généré`);
+  
+  return true;
+}
 
-fs.writeFileSync(path.resolve(distDir, 'index.html'), exampleHtml);
-console.log('Exemple HTML généré');
+// Générer les fichiers HTML à partir des templates
+processTemplate('index.html', 'index.html');
+processTemplate('configurator.html', 'configurator.html');
 
 console.log('Préparation CDN terminée avec succès!');

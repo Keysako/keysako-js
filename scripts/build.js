@@ -26,7 +26,7 @@ async function exportGithubEnv(name, value) {
 
 async function writeFiles(code, sourceMap, type, version, majorVersion) {
     const ext = type === 'esm' ? '.esm.js' : '.min.js';
-    const versionedDir = path.join(__dirname, 'dist', `v${majorVersion}`);
+    const versionedDir = path.join(__dirname, '..', 'dist', `v${majorVersion}`);
     
     // Ensure versioned directory exists
     await mkdir(versionedDir, { recursive: true });
@@ -69,21 +69,27 @@ async function generateChecksums(versionedDir, version) {
 async function build() {
     try {
         // Create dist directory
-        await mkdir(path.join(__dirname, 'dist'), { recursive: true });
+        await mkdir(path.join(__dirname, '..', 'dist'), { recursive: true });
 
         // Get version from package.json
         const packageJson = JSON.parse(
-            await readFile(path.join(__dirname, 'package.json'), 'utf8')
+            await readFile(path.join(__dirname, '..', 'package.json'), 'utf8')
         );
         const version = process.env.VERSION || packageJson.version;
         const majorVersion = version.split('.')[0];
 
         // Compile TypeScript
         console.log('Compiling TypeScript...');
-        execSync('npm run build:ts', { stdio: 'inherit' });
+        execSync('npm run build:ts', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
 
-        // Read compiled JS file
-        const inputFile = path.join(__dirname, 'dist', 'index.js');
+        // Read compiled JS file from the core package
+        const inputFile = path.join(__dirname, '..', 'packages', 'core', 'dist', 'index.js');
+        
+        // Check if file exists
+        if (!fs.existsSync(inputFile)) {
+            throw new Error(`Core package compiled file not found: ${inputFile}`);
+        }
+        
         const code = await readFile(inputFile, 'utf8');
 
         console.log('Creating UMD build...');
@@ -95,14 +101,46 @@ async function build() {
             },
             format: {
                 comments: false
-            }
+            },
+            toplevel: false,
+            compress: {
+                toplevel: false
+            },
+            mangle: {
+                toplevel: false
+            },
+            nameCache: null,
+            ie8: false,
+            keep_classnames: true,
+            keep_fnames: true,
+            safari10: false
         });
 
+        // Ajouter un wrapper UMD pour exposer KeysakoIdentity comme objet global
+        const umdCode = `
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.KeysakoIdentity = {}));
+})(this, (function (exports) { 'use strict';
+    ${minified.code.replace(/export\s*\{[^}]*\};?/g, '')}
+    
+    // Exposer les classes et fonctions
+    exports.KeysakoButton = KeysakoButton;
+    exports.TokenManager = TokenManager;
+    exports.IdentityProvider = IdentityProvider;
+    exports.logoSvg = logoSvg;
+    exports.parseJwt = parseJwt;
+    exports.isMobileDevice = isMobileDevice;
+    
+    Object.defineProperty(exports, '__esModule', { value: true });
+}));`;
+
         // Write UMD files
-        const versionedDir = await writeFiles(minified.code, minified.map, 'umd', version, majorVersion);
+        const versionedDir = await writeFiles(umdCode, minified.map, 'umd', version, majorVersion);
 
         // Calculate hash for the minified file
-        const cdnHash = await calculateHash(minified.code);
+        const cdnHash = await calculateHash(umdCode);
 
         console.log('Creating ESM build...');
         // Create ESM build
@@ -114,11 +152,19 @@ async function build() {
             module: true,
             format: {
                 comments: false
-            }
+            },
+            keep_classnames: true,
+            keep_fnames: true
         });
 
+        // Ajouter les exports explicites pour le fichier ESM
+        const esmCode = `${esmMinified.code.replace(/export\s*\{[^}]*\};?/g, '')}
+
+// Exports explicites
+export { KeysakoButton, TokenManager, IdentityProvider, logoSvg, parseJwt, isMobileDevice };`;
+
         // Write ESM files
-        await writeFiles(esmMinified.code, esmMinified.map, 'esm', version, majorVersion);
+        await writeFiles(esmCode, esmMinified.map, 'esm', version, majorVersion);
 
         console.log('Generating checksums...');
         // Generate and write checksums
