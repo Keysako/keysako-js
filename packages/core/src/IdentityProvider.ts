@@ -11,15 +11,16 @@ export class IdentityProvider {
 
   // Get the server URI from environment variable or use default
   private static getServerUri(): string {
-    // Check for environment variable in browser context
+    // Check for environment variables in browser context
     if (typeof window !== 'undefined') {
       // Try to access environment variables from different sources
       const envServerUri =
         (window as any).ENV_KEYSAKO_IDENTITY_SERVER_URI ||
         // For create-react-app style env vars
         (window as any).process?.env?.REACT_APP_KEYSAKO_IDENTITY_SERVER_URI ||
-        // For Vite
-        (import.meta as any)?.env?.VITE_KEYSAKO_IDENTITY_SERVER_URI;
+        // For Vite - using a more compatible approach
+        (typeof globalThis !== 'undefined' &&
+          (globalThis as any).__VITE_KEYSAKO_IDENTITY_SERVER_URI);
 
       if (envServerUri) {
         return envServerUri;

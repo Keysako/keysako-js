@@ -8,13 +8,13 @@ export default {
       file: 'dist/index.js',
       format: 'cjs',
       exports: 'named',
-      sourcemap: true
+      sourcemap: true,
     },
     {
       file: 'dist/index.esm.js',
       format: 'esm',
       exports: 'named',
-      sourcemap: true
+      sourcemap: true,
     },
     {
       file: 'dist/index.min.js',
@@ -23,10 +23,10 @@ export default {
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
-        '@keysako-identity/core': 'KeysakoCore'
+        '@keysako-identity/core': 'KeysakoCore',
       },
       plugins: [terser()],
-      sourcemap: true
-    }
-  ]
+      sourcemap: true,
+    },
+  ],
 };

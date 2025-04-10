@@ -438,7 +438,14 @@
 <a name='L373'></a><a href='#L373'>373</a>
 <a name='L374'></a><a href='#L374'>374</a>
 <a name='L375'></a><a href='#L375'>375</a>
-<a name='L376'></a><a href='#L376'>376</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -610,6 +617,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -617,6 +626,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -660,9 +671,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -814,9 +828,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { IdentityProvider } from './IdentityProvider';</span>
-<span class="cstat-no" title="statement not covered" >import { TokenManager } from './TokenManager';</span>
 <span class="cstat-no" title="statement not covered" >import { buttonThemes } from './themes';</span>
-<span class="cstat-no" title="statement not covered" >import { KeysakoButtonOptions, AuthEvents, AuthResult, ButtonTheme } from './types';</span>
+<span class="cstat-no" title="statement not covered" >import { TokenManager } from './TokenManager';</span>
+<span class="cstat-no" title="statement not covered" >import { KeysakoButtonOptions, AuthEvents, AuthResult } from './types';</span>
 <span class="cstat-no" title="statement not covered" >import { getContrastColor } from './utils';</span>
 &nbsp;
 /**
@@ -848,7 +862,7 @@ export interface ButtonText {
     signIn: 'Sign in with Keysako',
     signOut: 'Sign out',
     ageFormat: '{age}+',
-    isRTL: false
+    isRTL: false,
   };
 &nbsp;
   // Extract language code
@@ -861,26 +875,26 @@ export interface ButtonText {
       signIn: 'Se connecter avec Keysako',
       signOut: 'Se déconnecter',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     es: {
       signIn: 'Iniciar sesión con Keysako',
       signOut: 'Cerrar sesión',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     de: {
       signIn: 'Mit Keysako anmelden',
       signOut: 'Abmelden',
       ageFormat: '{age}+',
-      isRTL: false
+      isRTL: false,
     },
     ar: {
       signIn: 'تسجيل الدخول باستخدام Keysako',
       signOut: 'تسجيل الخروج',
       ageFormat: '+{age}',
-      isRTL: true
-    }
+      isRTL: true,
+    },
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return translations[lang] || defaultText;</span>
@@ -907,7 +921,7 @@ export interface ButtonText {
       shape: 'rounded',
       logoOnly: false,
       usePopup: false,
-      ...options
+      ...options,
     };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.options.clientId) {</span>
@@ -929,7 +943,7 @@ export interface ButtonText {
       usePopup: this.options.usePopup,
       onAuthComplete: <span class="fstat-no" title="function not covered" >(r</span>esult: AuthResult) =&gt; {
 <span class="cstat-no" title="statement not covered" >        this.handleAuthResult(result);</span>
-      }
+      },
     });
   }
 &nbsp;
@@ -959,7 +973,7 @@ export interface ButtonText {
 <span class="fstat-no" title="function not covered" >  createButtonElement(</span>): HTMLElement {
     const button = <span class="cstat-no" title="statement not covered" >document.createElement('button');</span>
 <span class="cstat-no" title="statement not covered" >    button.className = 'keysako-button';</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.options.logoOnly) {</span>
 <span class="cstat-no" title="statement not covered" >      button.classList.add('logo-only');</span>
     }
@@ -967,13 +981,13 @@ export interface ButtonText {
     // Get language preference
     const userLang = <span class="cstat-no" title="statement not covered" >this.options.locale || navigator.language || 'en';</span>
     const buttonText = <span class="cstat-no" title="statement not covered" >getButtonText(userLang);</span>
-    
+&nbsp;
     // Handle RTL languages
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (buttonText.isRTL) {</span>
 <span class="cstat-no" title="statement not covered" >      button.setAttribute('dir', 'rtl');</span>
 <span class="cstat-no" title="statement not covered" >      button.style.fontFamily = 'system-ui, -apple-system, sans-serif';</span>
     }
-    
+&nbsp;
     // Add the logo SVG
     const logoContainer = <span class="cstat-no" title="statement not covered" >document.createElement('span');</span>
 <span class="cstat-no" title="statement not covered" >    logoContainer.className = 'keysako-button-logo';</span>
@@ -984,20 +998,24 @@ export interface ButtonText {
 <span class="cstat-no" title="statement not covered" >      if (buttonText.isRTL) {</span>
         const text = <span class="cstat-no" title="statement not covered" >document.createElement('span');</span>
 <span class="cstat-no" title="statement not covered" >        text.className = 'keysako-button-text';</span>
-<span class="cstat-no" title="statement not covered" >        text.textContent = this.tokenManager.hasValidAccessToken() ? buttonText.signOut : buttonText.signIn;</span>
+<span class="cstat-no" title="statement not covered" >        text.textContent = this.tokenManager.hasValidAccessToken()</span>
+          ? buttonText.signOut
+          : buttonText.signIn;
 <span class="cstat-no" title="statement not covered" >        button.appendChild(text);</span>
 <span class="cstat-no" title="statement not covered" >        button.appendChild(logoContainer);</span>
       } else {
 <span class="cstat-no" title="statement not covered" >        button.appendChild(logoContainer);</span>
         const text = <span class="cstat-no" title="statement not covered" >document.createElement('span');</span>
 <span class="cstat-no" title="statement not covered" >        text.className = 'keysako-button-text';</span>
-<span class="cstat-no" title="statement not covered" >        text.textContent = this.tokenManager.hasValidAccessToken() ? buttonText.signOut : buttonText.signIn;</span>
+<span class="cstat-no" title="statement not covered" >        text.textContent = this.tokenManager.hasValidAccessToken()</span>
+          ? buttonText.signOut
+          : buttonText.signIn;
 <span class="cstat-no" title="statement not covered" >        button.appendChild(text);</span>
       }
     } else {
 <span class="cstat-no" title="statement not covered" >      button.appendChild(logoContainer);</span>
     }
-    
+&nbsp;
     // Add age badge if specified
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.options.age) {</span>
       const badge = <span class="cstat-no" title="statement not covered" >document.createElement('span');</span>
@@ -1028,18 +1046,21 @@ export interface ButtonText {
    */
   private <span class="fstat-no" title="function not covered" >applyTheme(</span>button: HTMLElement): void {
     const theme = <span class="cstat-no" title="statement not covered" >buttonThemes[this.options.theme as string] || buttonThemes.default;</span>
-    
+&nbsp;
     // Apply CSS variables
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-bg', theme.background);</span>
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-color', theme.color);</span>
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-border', theme.border);</span>
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-hover-bg', theme.hoverBg);</span>
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-shadow', theme.shadow);</span>
-    
+&nbsp;
     // In logo-only mode and rounded shape, use a perfect circle
-    const radius = <span class="cstat-no" title="statement not covered" >this.options.logoOnly &amp;&amp; this.options.shape === 'rounded' </span>
-      ? '50%' 
-      : this.options.shape === 'rounded' ? '6px' : '0';
+    const radius =
+<span class="cstat-no" title="statement not covered" >      this.options.logoOnly &amp;&amp; this.options.shape === 'rounded'</span>
+        ? '50%'
+        : this.options.shape === 'rounded'
+        ? '6px'
+        : '0';
 <span class="cstat-no" title="statement not covered" >    button.style.setProperty('--keysako-btn-radius', radius);</span>
 &nbsp;
     // Set badge colors based on the theme
@@ -1052,19 +1073,19 @@ export interface ButtonText {
     } else {
       // For the default theme (purple) and others
       // Use a contrasting color with the button background
-      const bgColor = <span class="cstat-no" title="statement not covered" >theme.background.includes('linear-gradient') </span>
+      const bgColor = <span class="cstat-no" title="statement not covered" >theme.background.includes('linear-gradient')</span>
         ? '#000' // For gradients, use black
         : getContrastColor(theme.background);
       const textColor = <span class="cstat-no" title="statement not covered" >bgColor === '#000' ? '#fff' : '#000';</span>
-      
+&nbsp;
 <span class="cstat-no" title="statement not covered" >      button.style.setProperty('--keysako-badge-bg', bgColor);</span>
 <span class="cstat-no" title="statement not covered" >      button.style.setProperty('--keysako-badge-color', textColor);</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (theme.backdropFilter) {</span>
 <span class="cstat-no" title="statement not covered" >      button.style.setProperty('--keysako-btn-backdrop-filter', theme.backdropFilter);</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (theme.textShadow) {</span>
 <span class="cstat-no" title="statement not covered" >      button.style.setProperty('--keysako-btn-text-shadow', theme.textShadow);</span>
     }
@@ -1094,11 +1115,11 @@ export interface ButtonText {
 &nbsp;
     const userLang = <span class="cstat-no" title="statement not covered" >this.options.locale || navigator.language || 'en';</span>
     const buttonText = <span class="cstat-no" title="statement not covered" >getButtonText(userLang);</span>
-    
+&nbsp;
     const textElement = <span class="cstat-no" title="statement not covered" >this.element.querySelector('.keysako-button-text');</span>
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (textElement) {</span>
-<span class="cstat-no" title="statement not covered" >      textElement.textContent = this.tokenManager.hasValidAccessToken() </span>
-        ? buttonText.signOut 
+<span class="cstat-no" title="statement not covered" >      textElement.textContent = this.tokenManager.hasValidAccessToken()</span>
+        ? buttonText.signOut
         : buttonText.signIn;
     }
   }
@@ -1195,7 +1216,7 @@ export interface ButtonText {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-04-09T10:35:02.647Z
+                at 2025-04-10T00:21:11.757Z
             </div>
         <script src="prettify.js"></script>
         <script>

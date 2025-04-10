@@ -31,19 +31,31 @@ describe('Utils', () => {
   });
   
   describe('generateRandomString', () => {
-    it('should generate a string of the specified length', () => {
-      const length = 10;
+    it('should generate a string of the expected format', () => {
+      // Mock the crypto.getRandomValues function
+      const mockGetRandomValues = jest.spyOn(window.crypto, 'getRandomValues');
+      mockGetRandomValues.mockImplementation(array => {
+        // Fill the array with predictable values
+        const typedArray = array as Uint32Array;
+        for (let i = 0; i < typedArray.length; i++) {
+          typedArray[i] = i + 1;
+        }
+        return array;
+      });
       
-      const result = generateRandomString(length);
+      const result = generateRandomString();
       
-      expect(result.length).toBe(length);
+      // For 28 length Uint32Array, we'll get a 56 character hex string
+      expect(result.length).toBe(56);
+      expect(result).toMatch(/^[0-9a-f]+$/); // hex characters only
+      
+      // Restore the original implementation
+      mockGetRandomValues.mockRestore();
     });
     
     it('should generate different strings on consecutive calls', () => {
-      const length = 10;
-      
-      const result1 = generateRandomString(length);
-      const result2 = generateRandomString(length);
+      const result1 = generateRandomString();
+      const result2 = generateRandomString();
       
       expect(result1).not.toBe(result2);
     });

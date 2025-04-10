@@ -31,7 +31,9 @@
     "@keysako-identity/core": "^1.0.6"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/jest": "^29.5.0",
+    "@vue/compiler-dom": "^3.5.13",
     "@vue/test-utils": "^2.4.6",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
@@ -39,6 +41,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^29.1.0",
     "typescript": "^4.9.5",
-    "vue": "^3.2.47"
+    "vue": "^3.4.21",
+    "@vue/vue3-jest": "^2.2.0"
   }
 }
