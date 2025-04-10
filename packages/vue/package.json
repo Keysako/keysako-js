@@ -41,7 +41,6 @@
     "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^29.1.0",
     "typescript": "^4.9.5",
-    "vue": "^3.4.21",
-    "@vue/vue3-jest": "^2.2.0"
+    "vue": "^3.4.21"
   }
 }
