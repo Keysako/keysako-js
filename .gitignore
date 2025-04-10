@@ -4,3 +4,7 @@ node_modules/
 packages/core/coverage/
 packages/react/coverage/
 packages/vue/coverage/
+packages/react/tsconfig.tsbuildinfo
+packages/core/tsconfig.tsbuildinfo
+packages/vue/tsconfig.tsbuildinfo
+node_modules/.package-lock.json
