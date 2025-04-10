@@ -3,7 +3,6 @@ const path = require('path');
 const crypto = require('crypto');
 const { minify } = require('terser');
 const { promisify } = require('util');
-const { execSync } = require('child_process');
 
 // Convert fs functions to promises
 const readFile = promisify(fs.readFile);
@@ -80,7 +79,8 @@ async function build() {
 
     // Compile TypeScript
     console.log('Compiling TypeScript...');
-    execSync('npm run build:ts', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
+    // Skip this step as it's now handled by the separate build:core script
+    // execSync('npm run build:ts', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
 
     // Read compiled JS file from the core package
     const inputFile = path.join(__dirname, '..', 'packages', 'core', 'dist', 'index.js');
