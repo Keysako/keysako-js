@@ -1,75 +1,75 @@
-# Workflows GitHub Actions pour Keysako Identity
+# GitHub Actions Workflows for Keysako Identity
 
-Ce répertoire contient les workflows GitHub Actions pour le projet Keysako Identity. Ces workflows automatisent les processus de build, test, publication et déploiement.
+This repository contains GitHub Actions workflows for the Keysako Identity project. These workflows automate the build, test, publish, and deployment processes.
 
-## Workflows disponibles
+## Available Workflows
 
 ### 1. Build and Test (`build-and-test.yml`)
 
-Ce workflow compile et teste tous les packages du monorepo.
+This workflow compiles and tests all packages in the monorepo.
 
-**Déclencheurs :**
-- Push sur les branches `main`, `master`, `develop`
-- Pull requests vers ces branches
-- Appel depuis d'autres workflows
+**Triggers:**
+- Push to `main`, `master`, `develop` branches
+- Pull requests to these branches
+- Calls from other workflows
 
-**Fonctionnalités :**
-- Installation des dépendances
-- Compilation des packages
-- Préparation des fichiers CDN
-- Exécution des tests
-- Stockage des artefacts de build
+**Features:**
+- Dependencies installation
+- Packages compilation
+- CDN files preparation
+- Tests execution
+- Build artifacts storage
 
 ### 2. Publish to NPM (`publish-npm.yml`)
 
-Ce workflow publie les packages sur le registre npm.
+This workflow publishes packages to the npm registry.
 
-**Déclencheurs :**
-- Push de tags commençant par `v` (ex: `v1.0.0`)
-- Déclenchement manuel
+**Triggers:**
+- Push of tags starting with `v` (e.g., `v1.0.0`)
+- Manual trigger
 
-**Fonctionnalités :**
-- Exécution du workflow de build et test
-- Publication des packages core, react et vue sur npm
+**Features:**
+- Execution of the build and test workflow
+- Publication of core, react, and vue packages on npm
 
 ### 3. Create GitHub Release (`create-release.yml`)
 
-Ce workflow crée une release GitHub avec les notes de version et les fichiers compilés.
+This workflow creates a GitHub release with version notes and compiled files.
 
-**Déclencheurs :**
-- Exécution réussie du workflow "Publish to NPM"
-- Déclenchement manuel
+**Triggers:**
+- Successful execution of the "Publish to NPM" workflow
+- Manual trigger
 
-**Fonctionnalités :**
-- Génération des notes de version
-- Calcul des hashes d'intégrité pour les fichiers CDN
-- Création d'une release GitHub avec les fichiers compilés
+**Features:**
+- Generation of release notes
+- Calculation of integrity hashes for CDN files
+- Creation of a GitHub release with compiled files
 
 ### 4. Deploy to CDN (`deploy-cdn.yml`)
 
-Ce workflow déploie les fichiers sur Azure Static Web Apps pour le CDN.
+This workflow deploys files to Azure Static Web Apps for the CDN.
 
-**Déclencheurs :**
-- Exécution réussie du workflow "Publish to NPM"
-- Déclenchement manuel
+**Triggers:**
+- Successful execution of the "Publish to NPM" workflow
+- Manual trigger
 
-**Fonctionnalités :**
-- Déploiement des fichiers compilés sur Azure Static Web Apps
+**Features:**
+- Deployment of compiled files to Azure Static Web Apps
 
-## Utilisation
+## Usage
 
-### Publication d'une nouvelle version
+### Publishing a New Version
 
-1. Mettez à jour les numéros de version dans tous les fichiers `package.json`
-2. Créez et poussez un tag avec le numéro de version :
+1. Update version numbers in all `package.json` files
+2. Create and push a tag with the version number:
    ```bash
    git tag v1.0.6
    git push origin v1.0.6
    ```
-3. Les workflows s'exécuteront automatiquement dans l'ordre suivant :
+3. Workflows will run automatically in the following order:
    - `publish-npm.yml`
-   - `create-release.yml` et `deploy-cdn.yml` (en parallèle)
+   - `create-release.yml` and `deploy-cdn.yml` (in parallel)
 
-### Déclenchement manuel
+### Manual Trigger
 
-Tous les workflows peuvent être déclenchés manuellement depuis l'interface GitHub Actions.
+All workflows can be manually triggered from the GitHub Actions interface.
