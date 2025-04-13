@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@keysako-identity/core': resolve(__dirname, '../../packages/core/src'),
-      '@keysako-identity/vue': resolve(__dirname, '../../packages/vue/src')
+      '@keysako/core': resolve(__dirname, '../../packages/core/src'),
+      '@keysako/vue': resolve(__dirname, '../../packages/vue/src')
     }
   }
 })

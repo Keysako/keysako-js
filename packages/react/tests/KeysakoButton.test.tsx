@@ -4,7 +4,7 @@ import React from 'react';
 import { KeysakoButton } from '../src/KeysakoButton';
 
 // Mock the modules from core
-jest.mock('@keysako-identity/core', () => {
+jest.mock('@keysako/core', () => {
   const mockCreateButtonElement = jest.fn().mockImplementation(() => {
     const button = document.createElement('button');
     button.className = 'keysako-button';
@@ -81,7 +81,7 @@ describe('KeysakoButton', () => {
     render(<KeysakoButton {...defaultProps} theme="dark" shape="sharp" />);
 
     // Import within the test to avoid hoisting issues
-    const { KeysakoButton: CoreButton } = jest.requireMock('@keysako-identity/core');
+    const { KeysakoButton: CoreButton } = jest.requireMock('@keysako/core');
     expect(CoreButton).toHaveBeenCalledWith(
       expect.objectContaining({
         clientId: defaultProps.clientId,

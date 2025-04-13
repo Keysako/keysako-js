@@ -6,28 +6,28 @@ A multi-framework authentication library for integrating with Keysako identity p
 
 This monorepo contains the following packages:
 
-- `@keysako-identity/core`: Core functionality that powers all framework implementations
-- `@keysako-identity/react`: React components for Keysako authentication
-- `@keysako-identity/vue`: Vue components for Keysako authentication
+- `@keysako/core`: Core functionality that powers all framework implementations
+- `@keysako/react`: React components for Keysako authentication
+- `@keysako/vue`: Vue components for Keysako authentication
 
 ## Installation
 
 ### Core Package (Vanilla JS)
 
 ```bash
-npm install @keysako-identity/core
+npm install @keysako/core
 ```
 
 ### React
 
 ```bash
-npm install @keysako-identity/react
+npm install @keysako/react
 ```
 
 ### Vue
 
 ```bash
-npm install @keysako-identity/vue
+npm install @keysako/vue
 ```
 
 ### CDN Usage
@@ -67,7 +67,7 @@ You can also try our [online configurator](https://cdn.keysako.com/configurator.
 
 ```html
 <script type="module">
-  import { KeysakoButton } from '@keysako-identity/core';
+  import { KeysakoButton } from '@keysako/core';
   
   // Register the custom element if it hasn't been registered yet
   if (!customElements.get('keysako-connect')) {
@@ -84,7 +84,7 @@ You can also try our [online configurator](https://cdn.keysako.com/configurator.
 ### React
 
 ```jsx
-import { KeysakoButton } from '@keysako-identity/react';
+import { KeysakoButton } from '@keysako/react';
 
 // Using the button directly
 function LoginPage() {
@@ -161,7 +161,7 @@ function App() {
 </template>
 
 <script setup>
-import { KeysakoButton, createKeysako } from '@keysako-identity/vue';
+import { KeysakoButton, createKeysako } from '@keysako/vue';
 
 // Using the composable for authentication
 const keysako = createKeysako({
@@ -268,7 +268,7 @@ keysako-connect, .keysako-button {
 The library provides utilities for token management:
 
 ```javascript
-import { TokenManager } from '@keysako-identity/core';
+import { TokenManager } from '@keysako/core';
 
 const tokenManager = TokenManager.getInstance();
 

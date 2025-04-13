@@ -1,4 +1,4 @@
-import { KeysakoButton as CoreButton, AuthEvents } from '@keysako-identity/core';
+import { KeysakoButton as CoreButton, AuthEvents } from '@keysako/core';
 import React, { useEffect, useRef } from 'react';
 
 import { KeysakoButtonProps } from './types';

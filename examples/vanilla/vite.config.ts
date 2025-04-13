@@ -4,7 +4,7 @@ import { resolve } from 'path'
 export default defineConfig({
   resolve: {
     alias: {
-      '@keysako-identity/core': resolve(__dirname, '../../packages/core/src')
+      '@keysako/core': resolve(__dirname, '../../packages/core/src')
     }
   }
 })

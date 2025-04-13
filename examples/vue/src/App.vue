@@ -117,9 +117,9 @@
 </template>
 
 <script setup lang="ts">
-import { KeysakoButton } from '@keysako-identity/vue';
+import { KeysakoButton } from '@keysako/vue';
 import { ref, onMounted } from 'vue';
-import { AuthResult, AuthError } from '@keysako-identity/core';
+import { AuthResult, AuthError } from '@keysako/core';
 
 // Define reactive variables
 const serverUri = ref('');
