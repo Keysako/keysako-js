@@ -46,19 +46,19 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Publish @keysako-identity/core
+      - name: Publish @keysako/core
         working-directory: packages/core
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @keysako-identity/react
+      - name: Publish @keysako/react
         working-directory: packages/react
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @keysako-identity/vue
+      - name: Publish @keysako/vue
         working-directory: packages/vue
         run: npm publish --access public
         env:
