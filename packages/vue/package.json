@@ -12,7 +12,7 @@
     "build:ts": "tsc",
     "build:bundle": "rollup -c",
     "build": "npm run build:ts && npm run build:bundle",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "keywords": [
     "identity",

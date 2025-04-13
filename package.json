@@ -13,9 +13,6 @@
     "dist"
   ],
   "scripts": {
-    "build:core": "tsc --build packages/core",
-    "build:react": "tsc --build packages/react",
-    "build:vue": "tsc --build packages/vue",
     "build:ts": "tsc --build",
     "build:bundle": "node scripts/build.js",
     "build": "npm run build:core && npm run build:ts && npm run build:bundle && node scripts/prepare-cdn.js",
