@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keysako Button Configurator</title>
     <!-- Charger le script UMD qui expose les fonctionnalités via window["keysako-connect"] -->
     <script src="./v{{ MAJOR_VERSION }}/keysako-connect.min.js"></script>
-    
+
     <!-- Script pour définir immédiatement le composant web personnalisé -->
     <script>
         // Fonction pour enregistrer le composant en utilisant la fonction fournie par la bibliothèque
@@ -20,23 +21,23 @@
             }
             return false;
         }
-        
+
         // Essayer d'enregistrer immédiatement
         if (!registerComponent()) {
             // Si ça ne fonctionne pas, attendre que le script soit chargé
-            const interval = setInterval(function() {
+            const interval = setInterval(function () {
                 if (registerComponent()) {
                     clearInterval(interval);
                 }
             }, 100);
-            
+
             // Arrêter de vérifier après 5 secondes
-            setTimeout(function() {
+            setTimeout(function () {
                 clearInterval(interval);
             }, 5000);
         }
     </script>
-    
+
     <style>
         :root {
             --primary-color: #2563eb;
@@ -210,6 +211,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>Keysako Button Configurator</h1>
@@ -330,7 +332,8 @@
 
                 <div class="form-group" id="callback-name-group" style="display: none;">
                     <label for="callback-name">Callback Function Name</label>
-                    <input type="text" id="callback-name" name="callback-name" value="handleKeysako" placeholder="e.g., handleKeysako">
+                    <input type="text" id="callback-name" name="callback-name" value="handleKeysako"
+                        placeholder="e.g., handleKeysako">
                 </div>
             </form>
         </div>
@@ -341,12 +344,6 @@
                 <!-- Le bouton sera inséré ici par JavaScript -->
             </div>
 
-            <div class="preview-container" ><keysako-connect
-    client-id="dfbdf"
-    redirect-uri="http://localhost:3000/callback"
-    theme="dark"
-    locale="tr"></keysako-connect>
-</div>
             <h2>Code</h2>
             <div class="code-section">
                 <pre><code id="codeExample"></code></pre>
@@ -356,9 +353,9 @@
     </div>
 
     <script>
-        
+
         // Show/hide callback name field based on checkbox
-        document.getElementById('use-callback').addEventListener('change', function() {
+        document.getElementById('use-callback').addEventListener('change', function () {
             document.getElementById('callback-name-group').style.display = this.checked ? 'block' : 'none';
             updateCallbackFunction();
         });
@@ -371,7 +368,7 @@
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            
+
             const button = document.querySelector('.copy-button');
             const originalText = button.textContent;
             button.textContent = 'Copied!';
@@ -387,36 +384,36 @@
                     console.warn('keysako-connect n\'est pas disponible. Réessai dans 500ms...');
                     setTimeout(() => updatePreview(), 500);
                     return null;
-                }               
+                }
                 // Créer l'instance du bouton Keysako en utilisant la classe KeysakoButton
                 const KeysakoButton = window["keysako-connect"].KeysakoButton;
                 if (!KeysakoButton) {
                     setTimeout(() => updatePreview(), 500);
                     return null;
                 }
-                
+
                 // Ajouter un gestionnaire d'événements factice si nécessaire
                 if (options.useCallback && options.callbackName) {
-                    options.onSuccess = function(result) {
+                    options.onSuccess = function (result) {
                         if (window[options.callbackName]) {
                             window[options.callbackName](result);
                         }
                     };
-                    options.onError = function(error) {
+                    options.onError = function (error) {
                         console.error('Authentication error:', error);
                         if (window[options.callbackName]) {
                             window[options.callbackName]({ error });
                         }
                     };
-                    
+
                     // Supprimer les propriétés non standard
                     delete options.useCallback;
                     delete options.callbackName;
                 }
-                
+
                 // Créer l'instance du bouton
                 const keysakoButton = new KeysakoButton(options);
-                
+
                 // Ajouter les styles au document s'ils n'existent pas déjà
                 if (!document.getElementById('keysako-styles')) {
                     const styleElement = document.createElement('style');
@@ -424,10 +421,10 @@
                     styleElement.textContent = keysakoButton.getStyles();
                     document.head.appendChild(styleElement);
                 }
-                
+
                 // Créer l'élément DOM du bouton
                 const buttonElement = keysakoButton.createButtonElement();
-                
+
                 return buttonElement;
             } catch (error) {
                 console.error('Erreur lors de la création du bouton:', error);
@@ -435,7 +432,7 @@
             }
         }
 
-        function updatePreview() {            
+        function updatePreview() {
             const clientId = document.getElementById('clientId').value || 'demo-client-id';
             const redirectUri = document.getElementById('redirectUri').value || window.location.origin + '/callback';
             const theme = document.getElementById('theme').value;
@@ -446,10 +443,10 @@
             const useCallback = document.getElementById('use-callback').checked;
             const callbackName = document.getElementById('callback-name').value;
             const language = document.getElementById('language').value;
-            
+
             const previewContainer = document.getElementById('preview-container');
             previewContainer.innerHTML = '';
-            
+
             // Créer le bouton avec l'API KeysakoButton directement
             const buttonOptions = {
                 clientId: clientId,
@@ -461,14 +458,14 @@
                 logoOnly: logoOnly,
                 locale: language || undefined
             };
-            
+
             if (useCallback && callbackName) {
                 buttonOptions.useCallback = true;
                 buttonOptions.callbackName = callbackName;
             }
-            
+
             const button = createKeysakoButton(buttonOptions);
-            
+
             if (button) {
                 previewContainer.appendChild(button);
             } else {
@@ -478,11 +475,11 @@
                 errorMessage.style.padding = '10px';
                 errorMessage.style.color = '#666';
                 previewContainer.appendChild(errorMessage);
-                
+
                 // Réessayer après un délai
                 setTimeout(() => updatePreview(), 500);
             }
-            
+
             // Mettre à jour l'exemple de code
             updateCodeExample(clientId, redirectUri, theme, shape, age, popup, logoOnly, useCallback, callbackName, language);
         }
@@ -511,20 +508,20 @@
         function updateCallbackFunction() {
             const useCallback = document.getElementById('use-callback').checked;
             const callbackName = document.getElementById('callback-name').value;
-            
+
             // Supprimer l'ancien callback s'il existe
             if (window.currentCallback) {
                 delete window[window.currentCallback];
             }
-            
+
             // Ajouter le nouveau callback si nécessaire
             if (useCallback && callbackName) {
-                window[callbackName] = function(result) {
+                window[callbackName] = function (result) {
                     console.log('Authentication result:', result);
                 };
                 window.currentCallback = callbackName;
             }
-            
+
             // Mettre à jour la prévisualisation
             updatePreview();
         }
@@ -534,33 +531,34 @@
         document.getElementById('clientId').addEventListener('input', updatePreview);
         document.getElementById('redirectUri').addEventListener('input', updatePreview);
         document.getElementById('callback-name').addEventListener('input', updatePreview);
-        document.getElementById('use-callback').addEventListener('change', function() {
+        document.getElementById('use-callback').addEventListener('change', function () {
             updateCallbackFunction();
         });
 
         // Initialize the preview and code on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Initialiser la prévisualisation
             updatePreview();
-            
+
             // Si le script n'est pas encore chargé, vérifier régulièrement
             if (!window["keysako-connect"] || !window["keysako-connect"].KeysakoButton) {
-                const checkInterval = setInterval(function() {
+                const checkInterval = setInterval(function () {
                     if (window["keysako-connect"] && window["keysako-connect"].KeysakoButton) {
                         // Mettre à jour la prévisualisation
                         updatePreview();
-                        
+
                         // Arrêter de vérifier
                         clearInterval(checkInterval);
                     }
                 }, 500);
-                
+
                 // Arrêter de vérifier après 10 secondes
-                setTimeout(function() {
+                setTimeout(function () {
                     clearInterval(checkInterval);
                 }, 10000);
             }
         });
     </script>
 </body>
+
 </html>

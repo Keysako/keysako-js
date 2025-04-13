@@ -230,8 +230,8 @@ export class KeysakoButton {
       this.options.logoOnly && this.options.shape === 'rounded'
         ? '50%'
         : this.options.shape === 'rounded'
-        ? '6px'
-        : '0';
+          ? '6px'
+          : '0';
     button.style.setProperty('--keysako-btn-radius', radius);
 
     // Set badge colors based on the theme

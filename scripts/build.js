@@ -1,14 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const { minify } = require('terser');
-const { promisify } = require('util');
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import { minify } from 'terser';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Define __dirname equivalent for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Convert fs functions to promises
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-const mkdir = promisify(fs.mkdir);
-const exists = promisify(fs.exists);
+const readFile = fs.promises.readFile;
+const writeFile = fs.promises.writeFile;
+const mkdir = fs.promises.mkdir;
+const exists = async (path) => !!(await fs.promises.stat(path).catch(() => false));
 
 async function calculateHash(content) {
   const hash = crypto.createHash('sha384');
@@ -86,7 +91,7 @@ async function build() {
     const inputFile = path.join(__dirname, '..', 'packages', 'core', 'dist', 'index.js');
 
     // Check if file exists
-    if (!fs.existsSync(inputFile)) {
+    if (!await exists(inputFile)) {
       throw new Error(`Core package compiled file not found: ${inputFile}`);
     }
 
