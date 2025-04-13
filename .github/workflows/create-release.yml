@@ -63,22 +63,22 @@ jobs:
           echo "" >> $GITHUB_ENV
           echo "### Packages" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
-          echo "- @keysako-identity/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
-          echo "- @keysako-identity/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
-          echo "- @keysako-identity/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "- @keysako/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "- @keysako/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "- @keysako/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "### Installation" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "#### NPM" >> $GITHUB_ENV
           echo "```bash" >> $GITHUB_ENV
           echo "# Core package" >> $GITHUB_ENV
-          echo "npm install @keysako-identity/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "npm install @keysako/core@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "# React package" >> $GITHUB_ENV
-          echo "npm install @keysako-identity/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "npm install @keysako/react@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "# Vue package" >> $GITHUB_ENV
-          echo "npm install @keysako-identity/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "npm install @keysako/vue@${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
           echo "```" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "#### CDN" >> $GITHUB_ENV

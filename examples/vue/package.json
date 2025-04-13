@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@keysako-identity/core": "file:../../packages/core",
-    "@keysako-identity/vue": "file:../../packages/vue",
+    "@keysako/core": "file:../../packages/core",
+    "@keysako/vue": "file:../../packages/vue",
     "vue": "^3.4.21"
   },
   "devDependencies": {

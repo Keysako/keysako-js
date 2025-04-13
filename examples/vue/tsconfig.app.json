@@ -1,13 +1,23 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*"],
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@keysako-identity/core": ["../../packages/core/src"],
-      "@keysako-identity/vue": ["../../packages/vue/src"]
+      "@keysako/core": [
+        "../../packages/core/src"
+      ],
+      "@keysako/vue": [
+        "../../packages/vue/src"
+      ]
     }
   }
 }

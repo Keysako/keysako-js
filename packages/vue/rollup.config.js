@@ -2,7 +2,7 @@ import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'dist/index.js',
-  external: ['vue', '@keysako-identity/core'],
+  external: ['vue', '@keysako/core'],
   output: [
     {
       file: 'dist/index.js',
@@ -22,7 +22,7 @@ export default {
       name: 'KeysakoVue',
       globals: {
         vue: 'Vue',
-        '@keysako-identity/core': 'KeysakoCore'
+        '@keysako/core': 'KeysakoCore'
       },
       plugins: [terser()],
       sourcemap: true

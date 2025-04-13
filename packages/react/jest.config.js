@@ -11,7 +11,7 @@ module.exports = {
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
   moduleNameMapper: {
-    '^@keysako-identity/core$': '<rootDir>/../core/src'
+    '^@keysako/core$': '<rootDir>/../core/src'
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js', '../../jest.setup.js']
 };

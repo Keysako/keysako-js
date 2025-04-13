@@ -4,7 +4,7 @@ import {
   AuthEvents,
   AuthResult,
   AuthError,
-} from '@keysako-identity/core';
+} from '@keysako/core';
 import { ref, onMounted, onUnmounted } from 'vue';
 
 import { KeysakoOptions, KeysakoReturn, Ref } from './types';

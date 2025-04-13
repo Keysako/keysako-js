@@ -2,7 +2,7 @@ import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'dist/index.js',
-  external: ['react', 'react-dom', '@keysako-identity/core'],
+  external: ['react', 'react-dom', '@keysako/core'],
   output: [
     {
       file: 'dist/index.js',
@@ -23,7 +23,7 @@ export default {
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
-        '@keysako-identity/core': 'KeysakoCore',
+        '@keysako/core': 'KeysakoCore',
       },
       plugins: [terser()],
       sourcemap: true,

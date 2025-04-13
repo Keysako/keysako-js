@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@keysako-identity/core": "file:../../packages/core",
-    "@keysako-identity/react": "file:../../packages/react",
+    "@keysako/core": "file:../../packages/core",
+    "@keysako/react": "file:../../packages/react",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

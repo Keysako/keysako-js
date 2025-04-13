@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
-import { KeysakoButton } from '@keysako-identity/react'
-import { AuthResult, AuthError } from '@keysako-identity/core'
+import { KeysakoButton } from '@keysako/react'
+import { AuthResult, AuthError } from '@keysako/core'
 import './App.css'
 
 function App() {
   const [authResult, setAuthResult] = useState<AuthResult | null>(null);
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [serverUri, setServerUri] = useState<string>('');
-  
+
   const redirectUri = `${window.location.origin}/auth/callback`;
   const clientId = "demo";
-  
+
   // Display environment variable for debugging
   useEffect(() => {
     // Expose environment variables to the global window
@@ -23,7 +23,7 @@ function App() {
     setServerUri(import.meta.env.VITE_KEYSAKO_IDENTITY_SERVER_URI || 'Not configured');
     console.log('VITE_KEYSAKO_IDENTITY_SERVER_URI:', import.meta.env.VITE_KEYSAKO_IDENTITY_SERVER_URI);
   }, []);
-  
+
   // Event handlers for authentication
   const handleSuccess = (result: AuthResult) => {
     console.log('Authentication successful:', result);
@@ -36,7 +36,7 @@ function App() {
     setAuthError(error);
     setAuthResult(null);
   };
-  
+
   return (
     <div className="container">
       <header>
@@ -87,77 +87,77 @@ function App() {
       <div className="buttons-container">
         <div className="button-row">
           <h2>Standard Buttons</h2>
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="light" 
+            theme="light"
             onSuccess={handleSuccess}
             onError={handleError}
           />
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="dark" 
+            theme="dark"
             onSuccess={handleSuccess}
             onError={handleError}
           />
         </div>
-        
+
         <div className="button-row">
           <h2>Age Verified Buttons</h2>
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="light" 
-            age={18} 
+            theme="light"
+            age={18}
             onSuccess={handleSuccess}
             onError={handleError}
           />
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="dark" 
-            age={18} 
+            theme="dark"
+            age={18}
             onSuccess={handleSuccess}
             onError={handleError}
           />
         </div>
-      
+
         <div className="button-row">
           <h2>Popup Buttons</h2>
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="light" 
-            usePopup 
+            theme="light"
+            usePopup
             onSuccess={handleSuccess}
             onError={handleError}
           />
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="dark" 
-            usePopup 
+            theme="dark"
+            usePopup
             onSuccess={handleSuccess}
             onError={handleError}
           />
         </div>
-        
+
         <div className="button-row">
           <h2>Logo Only Buttons</h2>
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="light" 
-            logoOnly 
+            theme="light"
+            logoOnly
             onSuccess={handleSuccess}
             onError={handleError}
           />
-          <KeysakoButton 
-            clientId={clientId} 
+          <KeysakoButton
+            clientId={clientId}
             redirectUri={redirectUri}
-            theme="dark" 
-            logoOnly 
+            theme="dark"
+            logoOnly
             onSuccess={handleSuccess}
             onError={handleError}
           />

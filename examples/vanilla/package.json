@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@keysako-identity/core": "file:../../packages/core"
+    "@keysako/core": "file:../../packages/core"
   },
   "devDependencies": {
     "typescript": "~5.7.2",

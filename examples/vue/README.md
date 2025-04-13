@@ -93,7 +93,7 @@ Le composable `createKeysako` permet de gérer l'état d'authentification au niv
 
 ```vue
 <script setup>
-import { createKeysako } from '@keysako-identity/vue';
+import { createKeysako } from '@keysako/vue';
 
 const keysako = createKeysako({
   clientId: 'your-client-id',

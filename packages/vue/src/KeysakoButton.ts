@@ -5,7 +5,7 @@ import {
   AuthError,
   ButtonTheme,
   ButtonShape,
-} from '@keysako-identity/core';
+} from '@keysako/core';
 import { h, defineComponent, ref, onMounted, onUnmounted, PropType } from 'vue';
 
 /**

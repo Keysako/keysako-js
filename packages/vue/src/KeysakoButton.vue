@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
-import { KeysakoButton as CoreButton, AuthEvents, AuthResult, AuthError } from '@keysako-identity/core';
+import { KeysakoButton as CoreButton, AuthEvents, AuthResult, AuthError } from '@keysako/core';
 import { KeysakoButtonProps } from './types';
 
 const props = defineProps<KeysakoButtonProps>();

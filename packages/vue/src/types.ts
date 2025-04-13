@@ -1,4 +1,4 @@
-import { KeysakoButtonOptions, AuthResult, AuthError } from '@keysako-identity/core';
+import { KeysakoButtonOptions, AuthResult, AuthError } from '@keysako/core';
 
 /**
  * Props for the KeysakoButton component

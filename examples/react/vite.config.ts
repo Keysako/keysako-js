@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@keysako-identity/core': path.resolve(__dirname, '../../packages/core/src'),
-      '@keysako-identity/react': path.resolve(__dirname, '../../packages/react/src')
+      '@keysako/core': path.resolve(__dirname, '../../packages/core/src'),
+      '@keysako/react': path.resolve(__dirname, '../../packages/react/src')
     }
   }
 })

@@ -1,6 +1,6 @@
 // Importer le module env en premier pour exposer les variables d'environnement
 import './env';
-import { KeysakoButton, TokenManager, logoSvg } from '@keysako-identity/core';
+import { KeysakoButton, TokenManager, logoSvg } from '@keysako/core';
 import { getIdentityServerUri } from './env';
 
 // Afficher l'URI du serveur d'identité depuis les variables d'environnement
@@ -79,13 +79,13 @@ function createButton(containerId: string, options: {
   // Créer l'élément DOM du bouton
   const buttonElement = document.createElement('button');
   buttonElement.className = `keysako-button ${options.logoOnly ? 'logo-only' : ''}`;
-  
+
   // Ajouter le logo
   const logoElement = document.createElement('span');
   logoElement.className = 'keysako-button-logo';
   logoElement.innerHTML = logoSvg;
   buttonElement.appendChild(logoElement);
-  
+
   // Ajouter le texte si ce n'est pas un bouton logo-only
   if (!options.logoOnly) {
     const textElement = document.createElement('span');
@@ -93,7 +93,7 @@ function createButton(containerId: string, options: {
     textElement.textContent = 'Se connecter avec Keysako';
     buttonElement.appendChild(textElement);
   }
-  
+
   // Ajouter le badge d'âge si nécessaire
   if (options.age) {
     const badgeElement = document.createElement('span');
@@ -101,7 +101,7 @@ function createButton(containerId: string, options: {
     badgeElement.textContent = `${options.age}+`;
     buttonElement.appendChild(badgeElement);
   }
-  
+
   // Ajouter l'écouteur de clic
   buttonElement.addEventListener('click', () => {
     if (tokenManager.hasValidAccessToken()) {
@@ -112,7 +112,7 @@ function createButton(containerId: string, options: {
       keysakoButton['provider']?.login();
     }
   });
-  
+
   // Appliquer le thème au bouton
   if (options.theme === 'light') {
     buttonElement.style.setProperty('--keysako-btn-bg', '#ffffff');
@@ -129,7 +129,7 @@ function createButton(containerId: string, options: {
     buttonElement.style.setProperty('--keysako-btn-hover-bg', '#444444');
     buttonElement.style.setProperty('--keysako-btn-radius', '8px');
   }
-  
+
   // Ajouter le bouton au conteneur
   container.appendChild(buttonElement);
 }
@@ -159,7 +159,7 @@ function handleAuthError(error: any) {
  */
 function updateAuthStatus() {
   const isAuthenticated = tokenManager.hasValidAccessToken();
-  
+
   if (isAuthenticated) {
     authStatus.textContent = 'Authentifié';
     authStatus.style.color = 'green';
@@ -181,7 +181,7 @@ function displayTokenInfo() {
   const accessToken = tokenManager.getAccessToken();
   const idToken = tokenManager.getIdToken();
   const claims = tokenManager.getTokenClaims();
-  
+
   tokenInfo.textContent = JSON.stringify({
     accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
     idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
