@@ -57,7 +57,7 @@ export class KeysakoConnectElement extends HTMLElement {
   /**
    * Called when an observed attribute changes
    */
-  attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
+  attributeChangedCallback(_: string, oldValue: string, newValue: string): void {
     if (oldValue !== newValue) {
       this._initButton();
     }
