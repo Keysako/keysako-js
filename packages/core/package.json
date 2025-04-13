@@ -1,5 +1,5 @@
 {
-  "name": "@keysako-identity/core",
+  "name": "@keysako/core",
   "version": "1.0.6",
   "description": "Core functionality for Keysako Identity Sign-in buttons",
   "main": "dist/index.js",

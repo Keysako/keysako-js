@@ -1,5 +1,5 @@
 {
-  "name": "@keysako-identity/vue",
+  "name": "@keysako/vue",
   "version": "1.0.6",
   "description": "Vue component for Keysako Identity Sign-in buttons",
   "main": "dist/index.js",

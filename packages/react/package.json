@@ -1,5 +1,5 @@
 {
-  "name": "@keysako-identity/react",
+  "name": "@keysako/react",
   "version": "1.0.6",
   "description": "React component for Keysako Identity Sign-in buttons",
   "main": "dist/index.js",
