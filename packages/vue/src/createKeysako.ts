@@ -1,10 +1,4 @@
-import {
-  IdentityProvider,
-  TokenManager,
-  AuthEvents,
-  AuthResult,
-  AuthError,
-} from '@keysako/core';
+import { IdentityProvider, TokenManager, AuthEvents, AuthResult, AuthError } from '@keysako/core';
 import { ref, onMounted, onUnmounted } from 'vue';
 
 import { KeysakoOptions, KeysakoReturn, Ref } from './types';
