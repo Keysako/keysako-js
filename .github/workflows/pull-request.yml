@@ -118,7 +118,7 @@ jobs:
 
       - name: Build Vanilla example
         run: |
-          cd examples/vanilla-vite
+          cd examples/vanilla
           npm install
           npm run build
 
