@@ -1,0 +1,164 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check package versions
+        run: |
+          ROOT_VERSION=$(node -p "require('./package.json').version")
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+          REACT_VERSION=$(node -p "require('./packages/react/package.json').version")
+          VUE_VERSION=$(node -p "require('./packages/vue/package.json').version")
+          
+          echo "Root version: $ROOT_VERSION"
+          echo "Core version: $CORE_VERSION"
+          echo "React version: $REACT_VERSION"
+          echo "Vue version: $VUE_VERSION"
+          
+          if [ "$CORE_VERSION" != "$ROOT_VERSION" ] || [ "$REACT_VERSION" != "$ROOT_VERSION" ] || [ "$VUE_VERSION" != "$ROOT_VERSION" ]; then
+            echo "Warning: Package versions are not synchronized with root version"
+            echo "::warning::Package versions are not synchronized with root version"
+          fi
+
+      - name: Lint code
+        run: |
+          if [ -f "package.json" ] && grep -q "\"lint\":" "package.json"; then
+            npm run lint
+          else
+            echo "No lint script found in package.json, skipping"
+          fi
+
+      - name: Type check
+        run: |
+          if [ -f "package.json" ] && grep -q "\"typecheck\":" "package.json"; then
+            npm run typecheck
+          else
+            echo "No typecheck script found in package.json, skipping"
+            # Fallback to tsc --noEmit
+            npx tsc --noEmit
+          fi
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Prepare CDN files
+        run: npm run build:cdn
+
+      - name: Run tests
+        run: npm test
+
+  examples:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Build React example
+        run: |
+          cd examples/react
+          npm install
+          npm run build
+
+      - name: Build Vue example
+        run: |
+          cd examples/vue
+          npm install
+          npm run build
+
+      - name: Build Vanilla example
+        run: |
+          cd examples/vanilla
+          npm install
+          npm run build
+
+  comment:
+    needs: [validate, build-and-test, examples]
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create PR comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const validate = '${{ needs.validate.result }}';
+            const buildAndTest = '${{ needs.build-and-test.result }}';
+            const examples = '${{ needs.examples.result }}';
+            
+            const createStatusIcon = (status) => {
+              if (status === 'success') return '✅';
+              if (status === 'failure') return '❌';
+              if (status === 'cancelled') return '⚪';
+              return '⚠️';
+            };
+            
+            const comment = `## PR Check Results
+            
+            | Check | Status |
+            | ----- | ------ |
+            | Validation | ${createStatusIcon(validate)} ${validate} |
+            | Build & Test | ${createStatusIcon(buildAndTest)} ${buildAndTest} |
+            | Examples | ${createStatusIcon(examples)} ${examples} |
+            
+            [View details](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

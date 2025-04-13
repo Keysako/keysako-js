@@ -1,0 +1,102 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.auth-result-container {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #4285f4;
+}
+
+.auth-result h2, .auth-error h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.result-details, .error-details {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.token-display {
+  background-color: #f1f3f4;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  overflow-wrap: break-word;
+  margin-top: 0.5rem;
+}
+
+.auth-error {
+  border-left: 4px solid #ea4335;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.logout-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
+pre {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow: auto;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+}

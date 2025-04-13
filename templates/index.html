@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keysako Identity Example</title>
+  <script src="./v{{ MAJOR_VERSION }}/keysako-connect.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    h1 {
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #1f2937;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    pre {
+      background-color: #f1f5f9;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Consolas', monospace;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      background-color: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .demo-container {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background-color: #f9fafb;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .links {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .links a {
+      color: #2563eb;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Keysako Identity - v{{ VERSION }}</h1>
+  <p>
+    Welcome to the Keysako Identity demonstration page. This library allows you to easily integrate
+    Keysako authentication into your web applications.
+  </p>
+
+  <div class="demo-container">
+    <h2>Demo</h2>
+    <p>Here's an example of the Keysako authentication button:</p>
+    <div class="button-container">
+      <div id="keysako-button-container">
+        <div class="preview-container">
+          <keysako-connect client-id="dfbdf" redirect-uri="http://localhost:3000/callback" theme="dark" locale="tr">
+          </keysako-connect>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Installation</h2>
+  <p>You can use Keysako Identity in several ways:</p>
+
+  <h3>Via CDN</h3>
+  <pre><code>&lt;script src="https://cdn.keysako.com/v{{ MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ CDN_HASH }}" crossorigin="anonymous"&gt;&lt;/script&gt;</code></pre>
+
+  <h3>Via npm</h3>
+  <pre><code>npm install @keysako-identity/core</code></pre>
+
+  <h3>Framework Components</h3>
+  <p>For React:</p>
+  <pre><code>npm install @keysako-identity/react</code></pre>
+
+  <p>For Vue:</p>
+  <pre><code>npm install @keysako-identity/vue</code></pre>
+
+  <h2>Usage</h2>
+  <pre><code>&lt;keysako-connect 
+  client-id="your-client-id"
+  redirect-uri="https://your-app.com/callback"
+&gt;&lt;/keysako-connect&gt;</code></pre>
+
+  <h2>Configuration</h2>
+  <p>
+    Use our <a href="configurator.html">configurator</a> to customize your button and get the corresponding code.
+  </p>
+
+  <div class="links">
+    <a href="https://docs.keysako.com" target="_blank">Documentation</a>
+    <a href="https://github.com/keysako/keysako-js" target="_blank">GitHub</a>
+    <a href="configurator.html">Configurator</a>
+    <a href="https://www.keysako.com" target="_blank">Official Website</a>
+  </div>
+
+  <script src="/v{{ MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ CDN_HASH }}"
+    crossorigin="anonymous"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('keysako-button-container');
+      const button = KeysakoIdentity.createButton({
+        clientId: 'demo-client-id',
+        redirectUri: window.location.origin + '/callback',
+        theme: 'light'
+      });
+
+      container.appendChild(button);
+
+      button.addEventListener('success', function (event) {
+        console.log('Authentication successful:', event.detail);
+      });
+
+      button.addEventListener('error', function (event) {
+        console.error('Authentication failed:', event.detail);
+      });
+    });
+  </script>
+</body>
+
+</html>
