@@ -65,10 +65,10 @@ export class TokenManager {
    */
   getTokenClaims(): TokenClaims | null {
     const tokens = this.getTokens();
-    if (!tokens?.id_token) return null;
+    if (!tokens?.access_token) return null;
 
     try {
-      return parseJwt(tokens.id_token);
+      return parseJwt(tokens.access_token);
     } catch (error) {
       console.error('Error parsing token claims:', error);
       return null;
