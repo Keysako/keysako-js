@@ -1,6 +1,6 @@
 {
   "name": "@keysako/core",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Core functionality for Keysako Identity Sign-in buttons",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",

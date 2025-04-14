@@ -85,7 +85,7 @@ export class TokenManager {
 
     // Check for the "has_minimum_age" claim
     // If it doesn't exist or is equal to true, the user has the minimum age
-    return claims.has_minimum_age === undefined || claims.has_minimum_age === true;
+    return typeof claims.has_minimum_age === undefined || claims.has_minimum_age === 'true';
   }
 
   /**
