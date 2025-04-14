@@ -1,17 +1,25 @@
 {
   "name": "@keysako/vue",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Vue component for Keysako Identity Sign-in buttons",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:ts": "tsc",
+    "clean": "rimraf dist",
+    "build:ts": "tsc --build",
     "build:bundle": "rollup -c",
-    "build": "npm run build:ts && npm run build:bundle",
+    "build": "npm run clean && npm run build:ts && npm run build:bundle",
     "test": "jest --passWithNoTests"
   },
   "keywords": [

@@ -1,31 +1,39 @@
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
 import terser from '@rollup/plugin-terser';
 
+// Pour obtenir __dirname dans un module ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 export default {
-  input: 'dist/index.js',
+  input: resolve(__dirname, 'dist/index.js'),
   external: ['vue', '@keysako/core'],
   output: [
     {
-      file: 'dist/index.js',
+      file: resolve(__dirname, 'dist/index.cjs.js'),
       format: 'cjs',
-      exports: 'named',
-      sourcemap: true
+      exports: 'auto',
+      sourcemap: true,
     },
     {
-      file: 'dist/index.esm.js',
+      file: resolve(__dirname, 'dist/index.esm.js'),
       format: 'esm',
-      exports: 'named',
-      sourcemap: true
+      exports: 'auto',
+      sourcemap: true,
     },
     {
-      file: 'dist/index.min.js',
+      file: resolve(__dirname, 'dist/index.min.js'),
       format: 'umd',
       name: 'KeysakoVue',
+      exports: 'auto',
       globals: {
         vue: 'Vue',
-        '@keysako/core': 'KeysakoCore'
+        '@keysako/core': 'KeysakoCore',
       },
       plugins: [terser()],
-      sourcemap: true
-    }
-  ]
+      sourcemap: true,
+    },
+  ],
 };

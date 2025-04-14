@@ -1,10 +1,17 @@
 {
   "name": "@keysako/core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Core functionality for Keysako Identity Sign-in buttons",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],

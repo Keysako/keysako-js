@@ -1,7 +1,7 @@
 {
-  "name": "keysako-identity",
-  "version": "1.1.0",
-  "description": "Keysako Identity Sign-in buttons",
+  "name": "keysako-connect",
+  "version": "1.1.1",
+  "description": "Keysako Connect Sign-in buttons",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -16,7 +16,7 @@
   "scripts": {
     "build:ts": "tsc --build",
     "build:bundle": "node scripts/build.js",
-    "build": "npm run build:core && npm run build:ts && npm run build:bundle && node scripts/prepare-cdn.js",
+    "build": "npm run build:core && npm run build:react && npm run build:vue && npm run build:ts && npm run build:bundle && node scripts/prepare-cdn.js",
     "build:core": "npm run build --workspace=@keysako/core",
     "build:react": "npm run build --workspace=@keysako/react",
     "build:vue": "npm run build --workspace=@keysako/vue",
