@@ -1,6 +1,6 @@
 {
   "name": "keysako-connect",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Keysako Connect Sign-in buttons",
   "private": true,
   "type": "module",
