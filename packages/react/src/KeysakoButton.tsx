@@ -23,28 +23,30 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
   onError,
 }) => {
   const buttonRef = useRef<HTMLDivElement>(null);
-
-  // If used within KeysakoProvider, use the context values
-  const finalClientId = clientId || '';
-  const finalRedirectUri = redirectUri;
-  const finalUsePopup = usePopup;
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     const initButton = async () => {
-      if (!buttonRef.current) return;
+      if (!buttonRef.current || isInitializedRef.current) return;
 
       try {
+        // Clear existing content first
+        buttonRef.current.innerHTML = '';
+
+        // Mark as initialized before starting to prevent double initialization
+        isInitializedRef.current = true;
+
         // Create style element for the button
         const styleElement = document.createElement('style');
 
         // Create button instance
         const button = new CoreButton({
-          clientId: finalClientId,
-          redirectUri: finalRedirectUri,
+          clientId,
+          redirectUri,
           theme,
           shape,
           logoOnly,
-          usePopup: finalUsePopup,
+          usePopup,
           age,
           locale,
           onSuccess,
@@ -60,6 +62,8 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
         buttonRef.current.appendChild(buttonElement);
       } catch (error) {
         console.error('Error initializing Keysako button:', error);
+        // Reset flag on error
+        isInitializedRef.current = false;
         if (onError) {
           onError({ error: 'Failed to initialize button' });
         }
@@ -73,19 +77,10 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
       if (buttonRef.current) {
         buttonRef.current.innerHTML = '';
       }
+      // Reset initialization flag on cleanup
+      isInitializedRef.current = false;
     };
-  }, [
-    finalClientId,
-    finalRedirectUri,
-    theme,
-    shape,
-    logoOnly,
-    finalUsePopup,
-    age,
-    locale,
-    onSuccess,
-    onError,
-  ]);
+  }, [clientId, redirectUri, theme, shape, logoOnly, usePopup, age, locale, onSuccess, onError]);
 
   // Handle authentication events
   useEffect(() => {

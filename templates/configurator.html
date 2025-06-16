@@ -18,6 +18,11 @@
                     console.log('Composant keysako-connect enregistré avec succès');
                     return true;
                 }
+                // Si registerKeysakoConnectElement n'est pas disponible, vérifier si l'élément est déjà enregistré
+                if (typeof customElements !== 'undefined' && customElements.get('keysako-connect')) {
+                    console.log('Composant keysako-connect déjà enregistré');
+                    return true;
+                }
             }
             return false;
         }
@@ -299,7 +304,7 @@
                     <label for="shape">Shape</label>
                     <select id="shape" name="shape">
                         <option value="rounded">Rounded</option>
-                        <option value="sharp">Sharp</option>
+                        <option value="sharp" selected>Sharp</option>
                     </select>
                 </div>
 
@@ -376,29 +381,32 @@
             }, 2000);
         }
 
-        function createKeysakoButton(options) {
+        async function createKeysakoButton(options) {
             try {
                 // Vérifier si keysako-connect est disponible
                 if (typeof window["keysako-connect"] === 'undefined') {
-                    console.warn('keysako-connect n\'est pas disponible. Réessai dans 500ms...');
-                    setTimeout(() => updatePreview(), 500);
-                    return null;
-                }
-                // Créer l'instance du bouton Keysako en utilisant la classe KeysakoButton
-                const KeysakoButton = window["keysako-connect"].KeysakoButton;
-                if (!KeysakoButton) {
-                    setTimeout(() => updatePreview(), 500);
+                    console.warn('keysako-connect n\'est pas disponible.');
                     return null;
                 }
 
+                // Créer l'instance du bouton Keysako en utilisant la classe KeysakoButton
+                const KeysakoButton = window["keysako-connect"].KeysakoButton;
+                if (!KeysakoButton) {
+                    console.warn('KeysakoButton n\'est pas disponible.');
+                    return null;
+                }
+
+                // Nettoyer les options avant de créer le bouton
+                const cleanOptions = { ...options };
+
                 // Ajouter un gestionnaire d'événements factice si nécessaire
                 if (options.useCallback && options.callbackName) {
-                    options.onSuccess = function (result) {
+                    cleanOptions.onSuccess = function (result) {
                         if (window[options.callbackName]) {
                             window[options.callbackName](result);
                         }
                     };
-                    options.onError = function (error) {
+                    cleanOptions.onError = function (error) {
                         console.error('Authentication error:', error);
                         if (window[options.callbackName]) {
                             window[options.callbackName]({ error });
@@ -406,12 +414,12 @@
                     };
 
                     // Supprimer les propriétés non standard
-                    delete options.useCallback;
-                    delete options.callbackName;
+                    delete cleanOptions.useCallback;
+                    delete cleanOptions.callbackName;
                 }
 
                 // Créer l'instance du bouton
-                const keysakoButton = new KeysakoButton(options);
+                const keysakoButton = new KeysakoButton(cleanOptions);
 
                 // Ajouter les styles au document s'ils n'existent pas déjà
                 if (!document.getElementById('keysako-styles')) {
@@ -421,8 +429,8 @@
                     document.head.appendChild(styleElement);
                 }
 
-                // Créer l'élément DOM du bouton
-                const buttonElement = keysakoButton.createButtonElement();
+                // Créer l'élément DOM du bouton (méthode async)
+                const buttonElement = await keysakoButton.createButtonElement();
 
                 return buttonElement;
             } catch (error) {
@@ -431,7 +439,10 @@
             }
         }
 
-        function updatePreview() {
+        let retryCount = 0;
+        const maxRetries = 10;
+
+        async function updatePreview() {
             const clientId = document.getElementById('clientId').value || 'demo-client-id';
             const redirectUri = document.getElementById('redirectUri').value || window.location.origin + '/callback';
             const theme = document.getElementById('theme').value;
@@ -446,37 +457,81 @@
             const previewContainer = document.getElementById('preview-container');
             previewContainer.innerHTML = '';
 
-            // Créer le bouton avec l'API KeysakoButton directement
-            const buttonOptions = {
-                clientId: clientId,
-                redirectUri: redirectUri,
-                theme: theme !== 'default' ? theme : undefined,
-                shape: shape !== 'rounded' ? shape : undefined,
-                age: age ? parseInt(age) : undefined,
-                usePopup: popup,
-                logoOnly: logoOnly,
-                locale: language || undefined
-            };
+            // Afficher un indicateur de chargement
+            const loadingMessage = document.createElement('div');
+            loadingMessage.textContent = 'Chargement du bouton...';
+            loadingMessage.style.padding = '10px';
+            loadingMessage.style.color = '#666';
+            loadingMessage.style.textAlign = 'center';
+            previewContainer.appendChild(loadingMessage);
 
-            if (useCallback && callbackName) {
-                buttonOptions.useCallback = true;
-                buttonOptions.callbackName = callbackName;
-            }
+            try {
+                // Créer le bouton avec l'API KeysakoButton directement
+                const buttonOptions = {
+                    clientId: clientId,
+                    redirectUri: redirectUri,
+                    theme: theme !== 'default' ? theme : undefined,
+                    shape: shape !== 'sharp' ? shape : undefined,
+                    age: age ? parseInt(age) : undefined,
+                    usePopup: popup,
+                    logoOnly: logoOnly,
+                    locale: language || undefined
+                };
 
-            const button = createKeysakoButton(buttonOptions);
+                if (useCallback && callbackName) {
+                    buttonOptions.useCallback = true;
+                    buttonOptions.callbackName = callbackName;
+                }
 
-            if (button) {
-                previewContainer.appendChild(button);
-            } else {
-                // Afficher un message d'erreur si le bouton n'a pas pu être créé
+                const button = await createKeysakoButton(buttonOptions);
+
+                // Retirer le message de chargement
+                previewContainer.innerHTML = '';
+
+                if (button && button instanceof Element) {
+                    previewContainer.appendChild(button);
+                    retryCount = 0; // Reset retry count on success
+                } else {
+                    // Afficher un message d'erreur si le bouton n'a pas pu être créé
+                    const errorMessage = document.createElement('div');
+
+                    if (retryCount < maxRetries) {
+                        errorMessage.textContent = 'Chargement du bouton en cours...';
+                        errorMessage.style.padding = '10px';
+                        errorMessage.style.color = '#666';
+
+                        // Réessayer après un délai
+                        retryCount++;
+                        setTimeout(() => updatePreview(), 500);
+                    } else {
+                        errorMessage.textContent = 'Impossible de charger le bouton. Veuillez actualiser la page.';
+                        errorMessage.style.padding = '10px';
+                        errorMessage.style.color = '#dc2626';
+                        errorMessage.style.backgroundColor = '#fef2f2';
+                        errorMessage.style.border = '1px solid #fecaca';
+                        errorMessage.style.borderRadius = '6px';
+                    }
+
+                    previewContainer.appendChild(errorMessage);
+                }
+            } catch (error) {
+                // Retirer le message de chargement
+                previewContainer.innerHTML = '';
+
+                console.error('Erreur lors de la création du bouton:', error);
                 const errorMessage = document.createElement('div');
-                errorMessage.textContent = 'Chargement du bouton en cours...';
+                errorMessage.textContent = 'Erreur lors du chargement du bouton.';
                 errorMessage.style.padding = '10px';
-                errorMessage.style.color = '#666';
+                errorMessage.style.color = '#dc2626';
+                errorMessage.style.backgroundColor = '#fef2f2';
+                errorMessage.style.border = '1px solid #fecaca';
+                errorMessage.style.borderRadius = '6px';
                 previewContainer.appendChild(errorMessage);
 
-                // Réessayer après un délai
-                setTimeout(() => updatePreview(), 500);
+                if (retryCount < maxRetries) {
+                    retryCount++;
+                    setTimeout(() => updatePreview(), 1000);
+                }
             }
 
             // Mettre à jour l'exemple de code
@@ -490,7 +545,7 @@
             if (redirectUri) code += `\n    redirect-uri="${redirectUri}"`;
             if (theme !== 'default') code += `\n    theme="${theme}"`;
             if (age) code += `\n    age="${age}"`;
-            if (shape !== 'rounded') code += `\n    shape="${shape}"`;
+            if (shape !== 'sharp') code += `\n    shape="${shape}"`;
             if (logoOnly) code += '\n    logo-only';
             if (popup) code += '\n    use-popup';
             if (useCallback && callbackName) code += `\n    callback="${callbackName}"`;
@@ -504,7 +559,7 @@
             document.getElementById('codeExample').textContent = code;
         }
 
-        function updateCallbackFunction() {
+        async function updateCallbackFunction() {
             const useCallback = document.getElementById('use-callback').checked;
             const callbackName = document.getElementById('callback-name').value;
 
@@ -522,29 +577,29 @@
             }
 
             // Mettre à jour la prévisualisation
-            updatePreview();
+            await updatePreview();
         }
 
         // Add event listeners
-        document.getElementById('configForm').addEventListener('change', updatePreview);
-        document.getElementById('clientId').addEventListener('input', updatePreview);
-        document.getElementById('redirectUri').addEventListener('input', updatePreview);
-        document.getElementById('callback-name').addEventListener('input', updatePreview);
-        document.getElementById('use-callback').addEventListener('change', function () {
+        document.getElementById('configForm').addEventListener('change', () => updatePreview());
+        document.getElementById('clientId').addEventListener('input', () => updatePreview());
+        document.getElementById('redirectUri').addEventListener('input', () => updatePreview());
+        document.getElementById('callback-name').addEventListener('input', () => updatePreview());
+        document.getElementById('use-callback').addEventListener('change', () => {
             updateCallbackFunction();
         });
 
         // Initialize the preview and code on page load
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             // Initialiser la prévisualisation
-            updatePreview();
+            await updatePreview();
 
             // Si le script n'est pas encore chargé, vérifier régulièrement
             if (!window["keysako-connect"] || !window["keysako-connect"].KeysakoButton) {
-                const checkInterval = setInterval(function () {
+                const checkInterval = setInterval(async function () {
                     if (window["keysako-connect"] && window["keysako-connect"].KeysakoButton) {
                         // Mettre à jour la prévisualisation
-                        updatePreview();
+                        await updatePreview();
 
                         // Arrêter de vérifier
                         clearInterval(checkInterval);

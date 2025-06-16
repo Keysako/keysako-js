@@ -1,6 +1,6 @@
 import { AuthResult, AuthError } from '@keysako/core';
 import { KeysakoButton } from '@keysako/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 function App() {
@@ -21,24 +21,18 @@ function App() {
 
     // Set server URI from environment variables
     setServerUri(import.meta.env.VITE_KEYSAKO_IDENTITY_SERVER_URI || 'Not configured');
-    console.log(
-      'VITE_KEYSAKO_IDENTITY_SERVER_URI:',
-      import.meta.env.VITE_KEYSAKO_IDENTITY_SERVER_URI
-    );
   }, []);
 
-  // Event handlers for authentication
-  const handleSuccess = (result: AuthResult) => {
-    console.log('Authentication successful:', result);
+  // Event handlers for authentication (memoized to prevent unnecessary re-renders)
+  const handleSuccess = useCallback((result: AuthResult) => {
     setAuthResult(result);
     setAuthError(null);
-  };
+  }, []);
 
-  const handleError = (error: AuthError) => {
-    console.error('Authentication failed:', error);
+  const handleError = useCallback((error: AuthError) => {
     setAuthError(error);
     setAuthResult(null);
-  };
+  }, []);
 
   return (
     <div className="container">
@@ -208,7 +202,7 @@ function App() {
 
       <div className="buttons-container">
         <div className="button-row">
-          <h2>Standard Buttons (2 buttons expected)</h2>
+          <h2>Standard Buttons</h2>
           <KeysakoButton
             key="standard-light"
             clientId={clientId}
@@ -236,7 +230,7 @@ function App() {
         </div>
 
         <div className="button-row">
-          <h2>Age Verified Buttons (2 buttons expected)</h2>
+          <h2>Age Verified Buttons</h2>
           <KeysakoButton
             key="age-light"
             clientId={clientId}
@@ -271,7 +265,7 @@ function App() {
         </div>
 
         <div className="button-row">
-          <h2>Logo Only Buttons (2 buttons expected)</h2>
+          <h2>Logo Only Buttons</h2>
           <KeysakoButton
             key="logo-light"
             clientId={clientId}
