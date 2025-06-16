@@ -3,7 +3,7 @@
 A secure, multi-framework authentication library for JavaScript applications with pluggable token storage strategies.
 
 [![npm version](https://badge.fury.io/js/@keysako/core.svg)](https://badge.fury.io/js/@keysako/core)
-[![Build Status](https://github.com/keysako/keysako-js/workflows/CI/badge.svg)](https://github.com/keysako/keysako-js/actions)
+[![Build Status](https://github.com/Keysako/keysako-js/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/Keysako/keysako-js/actions/workflows/build-and-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🚀 Features
@@ -53,15 +53,25 @@ npm install @keysako/vue       # Vue
 
 ```jsx
 import { KeysakoButton } from '@keysako/react';
+import { useCallback } from 'react';
 
 function LoginPage() {
+  // ✅ Use useCallback to prevent unnecessary re-renders
+  const handleSuccess = useCallback(result => {
+    console.log('Success:', result);
+  }, []);
+
+  const handleError = useCallback(error => {
+    console.error('Error:', error);
+  }, []);
+
   return (
     <KeysakoButton
       clientId="your-client-id"
       redirectUri="your-redirect-uri"
       theme="default"
-      onSuccess={result => console.log('Success:', result)}
-      onError={error => console.error('Error:', error)}
+      onSuccess={handleSuccess}
+      onError={handleError}
     />
   );
 }
@@ -392,43 +402,20 @@ Example: `1.2.3` where `1` is major, `2` is minor, `3` is patch.
 
 #### 1. Update Version Numbers
 
-Update all package versions simultaneously:
+Use the new JavaScript-based release script for cross-platform compatibility:
 
 ```bash
-# Edit package.json files manually or use script
-# Main package
-vi package.json                    # Update "version": "1.2.0"
+# Update versions and create release
+node scripts/update-version.js 1.2.2
 
-# Core package
-vi packages/core/package.json      # Update "version": "1.2.0"
-
-# React package
-vi packages/react/package.json     # Update "version": "1.2.0"
-                                   # Update "@keysako/core": "^1.2.0"
-
-# Vue package
-vi packages/vue/package.json       # Update "version": "1.2.0"
-                                   # Update "@keysako/core": "^1.2.0"
+# The script will:
+# - Update all package.json files
+# - Update cross-package dependencies
+# - Build and test all packages
+# - Provide push instructions
 ```
 
-#### 2. Build and Test
-
-Ensure everything works with the new version:
-
-```bash
-# Clean and build all packages
-npm run build
-
-# Run all tests
-npm test
-
-# Test each package individually
-npm run test:core
-npm run test:react
-npm run test:vue
-```
-
-#### 3. Commit Changes
+#### 2. Commit Changes
 
 Create a comprehensive commit message:
 
@@ -455,7 +442,7 @@ git commit -m "Release v1.2.0: Brief description of major changes
 - Test improvements"
 ```
 
-#### 4. Create Git Tag
+#### 3. Create Git Tag
 
 **Option A: Tag after PR merge (Recommended)**
 
@@ -499,39 +486,6 @@ git show v1.2.0
 
 # Verify build artifacts
 ls -la packages/*/dist/
-```
-
-### Quick Release Script
-
-For convenience, you can use this script for patch releases:
-
-```bash
-#!/bin/bash
-# quick-release.sh
-
-VERSION=$1
-if [ -z "$VERSION" ]; then
-  echo "Usage: ./quick-release.sh 1.2.3"
-  exit 1
-fi
-
-echo "🚀 Releasing version $VERSION..."
-
-# Update package.json files
-sed -i "s/\"version\": \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"version\": \"$VERSION\"/g" package.json
-sed -i "s/\"version\": \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"version\": \"$VERSION\"/g" packages/*/package.json
-sed -i "s/\"@keysako\/core\": \"\\^[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"@keysako\/core\": \"^$VERSION\"/g" packages/*/package.json
-
-# Build and test
-npm run build
-npm test
-
-# Commit and tag
-git add .
-git commit -m "Release v$VERSION"
-git tag -a "v$VERSION" -m "Release v$VERSION"
-
-echo "✅ Ready to push: git push origin main && git push origin v$VERSION"
 ```
 
 ### Release Types
@@ -579,6 +533,29 @@ After pushing the tag:
 - [ ] Publish to npm registry (if public packages)
 - [ ] Create GitHub release with release notes
 - [ ] Announce release (Discord, Twitter, etc.)
+
+## 🐛 Known Issues & Solutions
+
+### React StrictMode Double Mounting
+
+In development mode with React 18's StrictMode, you might notice components mount twice. This is expected behavior for detecting side effects. Our components handle this gracefully:
+
+- **Issue**: Authentication buttons may appear to initialize twice in development
+- **Solution**: Use `useCallback` for event handlers to prevent unnecessary re-renders
+- **Note**: This only happens in development (`npm run dev`), not in production builds
+
+### Preventing Re-render Issues
+
+Always memoize callback functions in React:
+
+```jsx
+// ❌ Don't: Creates new functions on each render
+<KeysakoButton onSuccess={result => handleLogin(result)} />;
+
+// ✅ Do: Use useCallback for stable references
+const handleSuccess = useCallback(result => handleLogin(result), []);
+<KeysakoButton onSuccess={handleSuccess} />;
+```
 
 ## 🤝 Contributing
 

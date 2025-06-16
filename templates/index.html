@@ -135,23 +135,65 @@
   <script src="/v{{ MAJOR_VERSION }}/keysako-connect.min.js" integrity="sha384-{{ CDN_HASH }}"
     crossorigin="anonymous"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const container = document.getElementById('keysako-button-container');
-      const button = KeysakoIdentity.createButton({
-        clientId: 'demo-client-id',
-        redirectUri: window.location.origin + '/callback',
-        theme: 'light'
-      });
+    document.addEventListener('DOMContentLoaded', async function () {
+      // Fonction pour créer le bouton avec la nouvelle API
+      async function createKeysakoButton() {
+        if (typeof window["keysako-connect"] !== 'undefined' && window["keysako-connect"].KeysakoButton) {
+          try {
+            const KeysakoButton = window["keysako-connect"].KeysakoButton;
 
-      container.appendChild(button);
+            // Créer l'instance du bouton
+            const keysakoButton = new KeysakoButton({
+              clientId: 'demo-client-id',
+              redirectUri: window.location.origin + '/callback',
+              theme: 'light',
+              onSuccess: function (result) {
+                console.log('Authentication successful:', result);
+              },
+              onError: function (error) {
+                console.error('Authentication failed:', error);
+              }
+            });
 
-      button.addEventListener('success', function (event) {
-        console.log('Authentication successful:', event.detail);
-      });
+            // Ajouter les styles au document s'ils n'existent pas déjà
+            if (!document.getElementById('keysako-styles')) {
+              const styleElement = document.createElement('style');
+              styleElement.id = 'keysako-styles';
+              styleElement.textContent = keysakoButton.getStyles();
+              document.head.appendChild(styleElement);
+            }
 
-      button.addEventListener('error', function (event) {
-        console.error('Authentication failed:', event.detail);
-      });
+            // Créer l'élément DOM du bouton (méthode async)
+            const buttonElement = await keysakoButton.createButtonElement();
+
+            // Ajouter le bouton au conteneur
+            const container = document.getElementById('keysako-button-container');
+            container.innerHTML = ''; // Vider le conteneur
+            container.appendChild(buttonElement);
+
+            return true;
+          } catch (error) {
+            console.error('Erreur lors de la création du bouton:', error);
+            return false;
+          }
+        }
+        return false;
+      }
+
+      // Essayer de créer le bouton immédiatement
+      if (!await createKeysakoButton()) {
+        // Si ça ne fonctionne pas, attendre que le script soit chargé
+        const interval = setInterval(async function () {
+          if (await createKeysakoButton()) {
+            clearInterval(interval);
+          }
+        }, 100);
+
+        // Arrêter de vérifier après 5 secondes
+        setTimeout(function () {
+          clearInterval(interval);
+        }, 5000);
+      }
     });
   </script>
 </body>

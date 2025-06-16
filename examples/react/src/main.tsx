@@ -1,4 +1,3 @@
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './index.css';
@@ -10,8 +9,4 @@ if (typeof window !== 'undefined') {
   window.ENV_KEYSAKO_IDENTITY_SERVER_URI = import.meta.env.VITE_KEYSAKO_IDENTITY_SERVER_URI;
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+createRoot(document.getElementById('root')!).render(<App />);
