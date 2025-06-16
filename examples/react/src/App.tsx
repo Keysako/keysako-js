@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { KeysakoButton } from '@keysako/react';
 import { AuthResult, AuthError } from '@keysako/core';
+import { KeysakoButton } from '@keysako/react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -45,7 +45,7 @@ function App() {
     console.log('App component rendered. Current state:', {
       authResult,
       authError,
-      serverUri
+      serverUri,
     });
   });
 
@@ -76,7 +76,9 @@ function App() {
                     <span className="status-icon">{authResult.isAuthorized ? '🟢' : '🟡'}</span>
                     <div>
                       <strong>Authorization</strong>
-                      <div className="status-text">{authResult.isAuthorized ? 'Authorized' : 'Restricted'}</div>
+                      <div className="status-text">
+                        {authResult.isAuthorized ? 'Authorized' : 'Restricted'}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -182,13 +184,13 @@ function App() {
                   </div>
                 )}
 
-
-
                 {/* Raw JSON for developers */}
                 <div className="json-section">
                   <h3>🔍 Raw AuthResult Object</h3>
                   <div className="json-display">
-                    <pre><code>{JSON.stringify(authResult, null, 2)}</code></pre>
+                    <pre>
+                      <code>{JSON.stringify(authResult, null, 2)}</code>
+                    </pre>
                   </div>
                 </div>
               </div>
@@ -232,6 +234,14 @@ function App() {
             onSuccess={handleSuccess}
             onError={handleError}
           />
+          <KeysakoButton
+            key="standard-default"
+            clientId={clientId}
+            redirectUri={redirectUri}
+            theme="default"
+            onSuccess={handleSuccess}
+            onError={handleError}
+          />
         </div>
 
         <div className="button-row">
@@ -254,25 +264,12 @@ function App() {
             onSuccess={handleSuccess}
             onError={handleError}
           />
-        </div>
-
-        <div className="button-row">
-          <h2>Popup Buttons (2 buttons expected)</h2>
           <KeysakoButton
-            key="popup-light"
+            key="age-default"
             clientId={clientId}
             redirectUri={redirectUri}
-            theme="light"
-            usePopup
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
-          <KeysakoButton
-            key="popup-dark"
-            clientId={clientId}
-            redirectUri={redirectUri}
-            theme="dark"
-            usePopup
+            theme="default"
+            age={18}
             onSuccess={handleSuccess}
             onError={handleError}
           />
@@ -294,6 +291,15 @@ function App() {
             clientId={clientId}
             redirectUri={redirectUri}
             theme="dark"
+            logoOnly
+            onSuccess={handleSuccess}
+            onError={handleError}
+          />
+          <KeysakoButton
+            key="logo-default"
+            clientId={clientId}
+            redirectUri={redirectUri}
+            theme="default"
             logoOnly
             onSuccess={handleSuccess}
             onError={handleError}

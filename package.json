@@ -25,9 +25,9 @@
     "test:core": "npm run test --workspace=@keysako/core",
     "test:react": "npm run test --workspace=@keysako/react",
     "test:vue": "npm run test --workspace=@keysako/vue",
-    "lint": "eslint \"{packages,examples}/**/*.{ts,tsx,js,jsx}\"",
-    "lint:fix": "eslint \"{packages,examples}/**/*.{ts,tsx,js,jsx}\" --fix",
-    "format": "prettier --write \"{packages,examples}/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint": "eslint \"{packages,examples}/**/{src,tests}/**/*.{ts,tsx,js,jsx}\"",
+    "lint:fix": "eslint \"{packages,examples}/**/{src,tests}/**/*.{ts,tsx,js,jsx}\" --fix",
+    "format": "prettier --write \"{packages,examples}/**/{src,tests}/**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "tsc --noEmit",
     "validate": "npm run lint && npm run typecheck && npm run test",
     "fix-all": "npm run format && npm run lint:fix"

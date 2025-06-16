@@ -5,7 +5,7 @@
 
 import { TokenData, TokenResponse } from '@keysako/core';
 
-import { SimpleCustomStorage } from '../SimpleCustomStorage';
+import { SimpleCustomStorage } from '../src/SimpleCustomStorage';
 
 describe('SimpleCustomStorage', () => {
   let storage: SimpleCustomStorage;

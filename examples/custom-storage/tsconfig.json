@@ -13,6 +13,13 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["tests/**/*", "*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "tests/**/*",
+    "*.ts",
+    "src/SimpleCustomStorage.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

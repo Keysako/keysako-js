@@ -1,6 +1,7 @@
 // Importer le module env en premier pour exposer les variables d'environnement
 import './env';
 import { KeysakoButton, TokenManager, logoSvg } from '@keysako/core';
+
 import { getIdentityServerUri } from './env';
 
 // Afficher l'URI du serveur d'identité depuis les variables d'environnement
