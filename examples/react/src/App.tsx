@@ -40,15 +40,6 @@ function App() {
     setAuthResult(null);
   };
 
-  // Debug: Log when component renders
-  useEffect(() => {
-    console.log('App component rendered. Current state:', {
-      authResult,
-      authError,
-      serverUri,
-    });
-  });
-
   return (
     <div className="container">
       <header>

@@ -37,7 +37,7 @@ createButton('logo-button-dark', { theme: 'dark', logoOnly: true });
 const tokenManager = TokenManager.getInstance();
 
 // Vérifier l'état initial de l'authentification
-updateAuthStatus();
+updateAuthStatus().catch(console.error);
 
 // Ajouter les écouteurs d'événements
 window.addEventListener('keysako:tokens_updated', updateAuthStatus);
@@ -107,10 +107,10 @@ function createButton(
   }
 
   // Ajouter l'écouteur de clic
-  buttonElement.addEventListener('click', () => {
-    if (tokenManager.hasValidAccessToken()) {
+  buttonElement.addEventListener('click', async () => {
+    if (await tokenManager.hasValidAccessToken()) {
       tokenManager.clearTokens();
-      updateAuthStatus();
+      await updateAuthStatus();
     } else {
       // Utiliser le provider pour se connecter
       keysakoButton['provider']?.login();
@@ -145,7 +145,7 @@ function handleAuthSuccess(result: any) {
   console.log('Authentication successful:', result);
   authStatus.textContent = 'Authentifié';
   authStatus.style.color = 'green';
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }
 
 /**
@@ -155,14 +155,14 @@ function handleAuthError(error: any) {
   console.error('Authentication failed:', error);
   authStatus.textContent = `Échec d'authentification: ${error.error}`;
   authStatus.style.color = 'red';
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }
 
 /**
  * Met à jour l'état d'authentification dans l'interface
  */
-function updateAuthStatus() {
-  const isAuthenticated = tokenManager.hasValidAccessToken();
+async function updateAuthStatus() {
+  const isAuthenticated = await tokenManager.hasValidAccessToken();
 
   if (isAuthenticated) {
     authStatus.textContent = 'Authentifié';
@@ -181,10 +181,10 @@ function updateAuthStatus() {
 /**
  * Affiche les informations du token
  */
-function displayTokenInfo() {
-  const accessToken = tokenManager.getAccessToken();
-  const idToken = tokenManager.getIdToken();
-  const claims = tokenManager.getTokenClaims();
+async function displayTokenInfo() {
+  const accessToken = await tokenManager.getAccessToken();
+  const idToken = await tokenManager.getIdToken();
+  const claims = await tokenManager.getTokenClaims();
 
   tokenInfo.textContent = JSON.stringify(
     {
@@ -202,5 +202,5 @@ function displayTokenInfo() {
  */
 function logout() {
   tokenManager.clearTokens();
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }

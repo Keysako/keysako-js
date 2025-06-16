@@ -189,25 +189,30 @@ describe('Token Storage Strategies', () => {
       // Save original localStorage
       const originalLocalStorage = window.localStorage;
 
-      // Mock localStorage to be unavailable
+      // Mock localStorage to be unavailable with proper error throwing
+      const mockStorage = {
+        setItem: jest.fn().mockImplementation(() => {
+          throw new Error('Storage not available');
+        }),
+        getItem: jest.fn().mockImplementation(() => {
+          throw new Error('Storage not available');
+        }),
+        removeItem: jest.fn().mockImplementation(() => {
+          throw new Error('Storage not available');
+        }),
+      };
+
       Object.defineProperty(window, 'localStorage', {
-        value: {
-          setItem: jest.fn(() => {
-            throw new Error('Storage not available');
-          }),
-          getItem: jest.fn(() => {
-            throw new Error('Storage not available');
-          }),
-          removeItem: jest.fn(() => {
-            throw new Error('Storage not available');
-          }),
-        },
+        value: mockStorage,
         writable: true,
         configurable: true,
       });
 
       const storage = new LocalStorageStrategy();
       expect(storage.isAvailable()).toBe(false);
+
+      // Verify that setItem was called (and threw an error)
+      expect(mockStorage.setItem).toHaveBeenCalledWith('__test__', '__test__');
 
       // Restore original localStorage
       Object.defineProperty(window, 'localStorage', {
