@@ -39,7 +39,7 @@ export function getButtonText(locale: string): ButtonText {
   // Extract language code
   const lang = locale.split('-')[0].toLowerCase();
 
-  // Add more languages as needed
+  // Complete translations for all supported languages
   const translations: Record<string, ButtonText> = {
     en: defaultText,
     fr: {
@@ -57,6 +57,78 @@ export function getButtonText(locale: string): ButtonText {
     de: {
       signIn: 'Mit Keysako anmelden',
       signOut: 'Abmelden',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    it: {
+      signIn: 'Accedi con Keysako',
+      signOut: 'Esci',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    pt: {
+      signIn: 'Entrar com Keysako',
+      signOut: 'Sair',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    nl: {
+      signIn: 'Inloggen met Keysako',
+      signOut: 'Uitloggen',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    pl: {
+      signIn: 'Zaloguj się z Keysako',
+      signOut: 'Wyloguj się',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ru: {
+      signIn: 'Войти с Keysako',
+      signOut: 'Выйти',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ja: {
+      signIn: 'Keysakoでサインイン',
+      signOut: 'サインアウト',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ko: {
+      signIn: 'Keysako로 로그인',
+      signOut: '로그아웃',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    zh: {
+      signIn: '使用 Keysako 登录',
+      signOut: '登出',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    hi: {
+      signIn: 'Keysako से साइन इन करें',
+      signOut: 'साइन आउट',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    tr: {
+      signIn: 'Keysako ile giriş yap',
+      signOut: 'Çıkış yap',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    th: {
+      signIn: 'เข้าสู่ระบบด้วย Keysako',
+      signOut: 'ออกจากระบบ',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    vi: {
+      signIn: 'Đăng nhập với Keysako',
+      signOut: 'Đăng xuất',
       ageFormat: '{age}+',
       isRTL: false,
     },

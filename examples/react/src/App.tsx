@@ -251,6 +251,7 @@ function App() {
             clientId={clientId}
             redirectUri={redirectUri}
             theme="light"
+            shape="sharp"
             age={18}
             onSuccess={handleSuccess}
             onError={handleError}
@@ -260,6 +261,7 @@ function App() {
             clientId={clientId}
             redirectUri={redirectUri}
             theme="dark"
+            shape="sharp"
             age={18}
             onSuccess={handleSuccess}
             onError={handleError}
@@ -268,7 +270,9 @@ function App() {
             key="age-default"
             clientId={clientId}
             redirectUri={redirectUri}
+            locale="vi-VN"
             theme="default"
+            shape="rounded"
             age={18}
             onSuccess={handleSuccess}
             onError={handleError}

@@ -300,6 +300,31 @@ describe('getButtonText', () => {
     const text = getButtonText('fr-CA');
     expect(text.signIn).toBe('Se connecter avec Keysako');
   });
+
+  it('should support all new language translations', () => {
+    const testCases = [
+      { locale: 'it-IT', expectedSignIn: 'Accedi con Keysako', expectedSignOut: 'Esci' },
+      { locale: 'pt-BR', expectedSignIn: 'Entrar com Keysako', expectedSignOut: 'Sair' },
+      { locale: 'nl-NL', expectedSignIn: 'Inloggen met Keysako', expectedSignOut: 'Uitloggen' },
+      { locale: 'pl-PL', expectedSignIn: 'Zaloguj się z Keysako', expectedSignOut: 'Wyloguj się' },
+      { locale: 'ru-RU', expectedSignIn: 'Войти с Keysako', expectedSignOut: 'Выйти' },
+      { locale: 'ja-JP', expectedSignIn: 'Keysakoでサインイン', expectedSignOut: 'サインアウト' },
+      { locale: 'ko-KR', expectedSignIn: 'Keysako로 로그인', expectedSignOut: '로그아웃' },
+      { locale: 'zh-CN', expectedSignIn: '使用 Keysako 登录', expectedSignOut: '登出' },
+      { locale: 'hi-IN', expectedSignIn: 'Keysako से साइन इन करें', expectedSignOut: 'साइन आउट' },
+      { locale: 'tr-TR', expectedSignIn: 'Keysako ile giriş yap', expectedSignOut: 'Çıkış yap' },
+      { locale: 'th-TH', expectedSignIn: 'เข้าสู่ระบบด้วย Keysako', expectedSignOut: 'ออกจากระบบ' },
+      { locale: 'vi-VN', expectedSignIn: 'Đăng nhập với Keysako', expectedSignOut: 'Đăng xuất' },
+    ];
+
+    testCases.forEach(({ locale, expectedSignIn, expectedSignOut }) => {
+      const buttonText = getButtonText(locale);
+      expect(buttonText.signIn).toBe(expectedSignIn);
+      expect(buttonText.signOut).toBe(expectedSignOut);
+      expect(buttonText.isRTL).toBe(false);
+      expect(buttonText.ageFormat).toBe('{age}+');
+    });
+  });
 });
 
 describe('logoSvg', () => {
