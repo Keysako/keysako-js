@@ -374,6 +374,212 @@ npm install
 npm run dev
 ```
 
+## 🏷️ Release Management
+
+This project follows semantic versioning (SemVer) and uses a structured release process.
+
+### Version Numbering
+
+We follow [Semantic Versioning 2.0.0](https://semver.org/):
+
+- **MAJOR** version when you make incompatible API changes
+- **MINOR** version when you add functionality in a backwards compatible manner
+- **PATCH** version when you make backwards compatible bug fixes
+
+Example: `1.2.3` where `1` is major, `2` is minor, `3` is patch.
+
+### Release Process
+
+#### 1. Update Version Numbers
+
+Update all package versions simultaneously:
+
+```bash
+# Edit package.json files manually or use script
+# Main package
+vi package.json                    # Update "version": "1.2.0"
+
+# Core package
+vi packages/core/package.json      # Update "version": "1.2.0"
+
+# React package
+vi packages/react/package.json     # Update "version": "1.2.0"
+                                   # Update "@keysako/core": "^1.2.0"
+
+# Vue package
+vi packages/vue/package.json       # Update "version": "1.2.0"
+                                   # Update "@keysako/core": "^1.2.0"
+```
+
+#### 2. Build and Test
+
+Ensure everything works with the new version:
+
+```bash
+# Clean and build all packages
+npm run build
+
+# Run all tests
+npm test
+
+# Test each package individually
+npm run test:core
+npm run test:react
+npm run test:vue
+```
+
+#### 3. Commit Changes
+
+Create a comprehensive commit message:
+
+```bash
+git add .
+git commit -m "Release v1.2.0: Brief description of major changes
+
+✨ New Features:
+- Feature 1 description
+- Feature 2 description
+
+🐛 Bug Fixes:
+- Bug fix 1
+- Bug fix 2
+
+🔄 Changes:
+- Breaking change 1 (if any)
+- Other notable changes
+
+📚 Documentation:
+- Documentation updates
+
+🧪 Testing:
+- Test improvements"
+```
+
+#### 4. Create Git Tag
+
+**Option A: Tag after PR merge (Recommended)**
+
+```bash
+# 1. Push your feature branch
+git push origin your-feature-branch
+
+# 2. Create Pull Request on GitHub/GitLab
+
+# 3. After PR is merged, switch to main and create tag
+git checkout main
+git pull origin main
+git tag -a v1.2.0 -m "Release v1.2.0"
+git push origin v1.2.0
+```
+
+**Option B: Tag on feature branch (if you merge yourself)**
+
+```bash
+# Create annotated tag with release notes
+git tag -a v1.2.0 -m "Release v1.2.0
+
+Major improvements:
+- Feature highlights
+- Important bug fixes
+- Breaking changes (if any)
+
+Full changelog: See commit history for detailed changes."
+
+# Push commits and tags
+git push origin your-feature-branch
+git push origin v1.2.0
+```
+
+#### 5. Verify Release
+
+```bash
+# Check tags
+git tag -l
+git show v1.2.0
+
+# Verify build artifacts
+ls -la packages/*/dist/
+```
+
+### Quick Release Script
+
+For convenience, you can use this script for patch releases:
+
+```bash
+#!/bin/bash
+# quick-release.sh
+
+VERSION=$1
+if [ -z "$VERSION" ]; then
+  echo "Usage: ./quick-release.sh 1.2.3"
+  exit 1
+fi
+
+echo "🚀 Releasing version $VERSION..."
+
+# Update package.json files
+sed -i "s/\"version\": \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"version\": \"$VERSION\"/g" package.json
+sed -i "s/\"version\": \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"version\": \"$VERSION\"/g" packages/*/package.json
+sed -i "s/\"@keysako\/core\": \"\\^[0-9]\+\.[0-9]\+\.[0-9]\+\"/\"@keysako\/core\": \"^$VERSION\"/g" packages/*/package.json
+
+# Build and test
+npm run build
+npm test
+
+# Commit and tag
+git add .
+git commit -m "Release v$VERSION"
+git tag -a "v$VERSION" -m "Release v$VERSION"
+
+echo "✅ Ready to push: git push origin main && git push origin v$VERSION"
+```
+
+### Release Types
+
+#### 🔧 Patch Release (1.2.3 → 1.2.4)
+
+- Bug fixes
+- Security patches
+- Documentation updates
+- No breaking changes
+
+#### ✨ Minor Release (1.2.3 → 1.3.0)
+
+- New features
+- New language support
+- Framework version updates (React 19 support)
+- Backwards compatible changes
+
+#### 💥 Major Release (1.2.3 → 2.0.0)
+
+- Breaking API changes
+- Major architecture changes
+- Removal of deprecated features
+- Requires migration guide
+
+### Release Checklist
+
+Before creating a release:
+
+- [ ] All tests pass (`npm test`)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Version numbers updated in all packages
+- [ ] Dependencies updated between packages
+- [ ] CHANGELOG.md updated (if exists)
+- [ ] Breaking changes documented
+- [ ] Migration guide updated (for major/minor with breaking changes)
+- [ ] Examples tested with new version
+
+### Post-Release
+
+After pushing the tag:
+
+- [ ] Verify packages build correctly
+- [ ] Update documentation website (if applicable)
+- [ ] Publish to npm registry (if public packages)
+- [ ] Create GitHub release with release notes
+- [ ] Announce release (Discord, Twitter, etc.)
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
