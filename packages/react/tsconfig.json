@@ -15,7 +15,8 @@
     "composite": true,
     "declarationMap": true,
     "sourceMap": true,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
     "src/**/*"

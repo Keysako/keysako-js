@@ -51,7 +51,9 @@ export class KeysakoConnectElement extends HTMLElement {
    * Called when the element is connected to the DOM
    */
   connectedCallback(): void {
-    this._initButton();
+    this._initButton().catch(error => {
+      console.error('Error initializing Keysako button:', error);
+    });
   }
 
   /**
@@ -59,14 +61,16 @@ export class KeysakoConnectElement extends HTMLElement {
    */
   attributeChangedCallback(_: string, oldValue: string, newValue: string): void {
     if (oldValue !== newValue) {
-      this._initButton();
+      this._initButton().catch(error => {
+        console.error('Error updating Keysako button:', error);
+      });
     }
   }
 
   /**
    * Initialize the Keysako button
    */
-  private _initButton(): void {
+  private async _initButton(): Promise<void> {
     try {
       // Get attributes
       const clientId = this.getAttribute('client-id');
@@ -131,7 +135,7 @@ export class KeysakoConnectElement extends HTMLElement {
       this._shadow.appendChild(style);
 
       // Add button element
-      const buttonElement = this._button.createButtonElement();
+      const buttonElement = await this._button.createButtonElement();
       this._shadow.appendChild(buttonElement);
     } catch (error) {
       console.error('Error initializing KeysakoConnect:', error);

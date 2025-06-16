@@ -202,7 +202,14 @@ export class IdentityProvider {
     if (!code) {
       const error = 'No authorization code received';
       if (this.config.onAuthComplete) {
-        this.config.onAuthComplete({ success: false, error });
+        this.config.onAuthComplete({
+          success: false,
+          isAuthorized: false,
+          hasIdentity: false,
+          hasRequiredAge: false,
+          isCountryAllowed: false,
+          error,
+        });
       }
       throw new Error(error);
     }
@@ -210,7 +217,14 @@ export class IdentityProvider {
     if (state !== storedState) {
       const error = 'Invalid state parameter';
       if (this.config.onAuthComplete) {
-        this.config.onAuthComplete({ success: false, error });
+        this.config.onAuthComplete({
+          success: false,
+          isAuthorized: false,
+          hasIdentity: false,
+          hasRequiredAge: false,
+          isCountryAllowed: false,
+          error,
+        });
       }
       throw new Error(error);
     }
@@ -225,12 +239,29 @@ export class IdentityProvider {
       );
 
       // Check age if required
-      const hasRequiredAge = this.tokenManager.hasRequiredAge();
+      const claims = await this.tokenManager.getTokenClaims();
+      const requiredAge = claims?.required_age;
+      const hasRequiredAge =
+        typeof claims?.has_required_age === 'undefined' || claims?.has_required_age === 'true';
+      const countryCode = claims?.country_code;
+      const isCountryAllowed =
+        typeof claims?.is_country_allowed === 'undefined' || claims?.is_country_allowed === 'true';
+      // Convert Unix timestamp (exp) to string for AuthResult
+      const expiresAt = claims?.exp ? claims.exp.toString() : undefined;
+      const hasIdentity =
+        typeof claims?.has_identity === 'undefined' || claims?.has_identity === 'true';
+      const isAuthorized = hasRequiredAge && isCountryAllowed;
 
       if (this.config.onAuthComplete) {
         this.config.onAuthComplete({
           success: true,
+          requiredAge,
           hasRequiredAge,
+          countryCode,
+          isCountryAllowed,
+          expiresAt,
+          hasIdentity,
+          isAuthorized,
         });
       }
 
@@ -239,7 +270,13 @@ export class IdentityProvider {
         new CustomEvent(AuthEvents.AUTH_COMPLETE, {
           detail: {
             success: true,
+            requiredAge,
             hasRequiredAge,
+            countryCode,
+            isCountryAllowed,
+            expiresAt,
+            hasIdentity,
+            isAuthorized,
           },
           bubbles: true,
           composed: true,
@@ -253,6 +290,10 @@ export class IdentityProvider {
     } catch (error: any) {
       const authError = {
         success: false,
+        isAuthorized: false,
+        hasIdentity: false,
+        hasRequiredAge: false,
+        isCountryAllowed: false,
         error: error.message,
       };
 
@@ -332,35 +373,35 @@ export class IdentityProvider {
    * Check if the user is authenticated
    * @returns True if authenticated
    */
-  isAuthenticated(): boolean {
-    return this.tokenManager.hasValidAccessToken();
+  async isAuthenticated(): Promise<boolean> {
+    return await this.tokenManager.hasValidAccessToken();
   }
 
   /**
    * Get the access token
    * @returns Access token or null
    */
-  getAccessToken(): string | null {
-    return this.tokenManager.getAccessToken();
+  async getAccessToken(): Promise<string | null> {
+    return await this.tokenManager.getAccessToken();
   }
 
   /**
    * Get the ID token
    * @returns ID token or null
    */
-  getIdToken(): string | null {
-    return this.tokenManager.getIdToken();
+  async getIdToken(): Promise<string | null> {
+    return await this.tokenManager.getIdToken();
   }
 
   /**
    * Logout the user
    */
   async logout(): Promise<void> {
-    const tokens = this.tokenManager.getTokens();
+    const tokens = await this.tokenManager.getTokens();
     const idToken = tokens?.id_token;
 
     // Clean up local tokens
-    this.tokenManager.clearTokens();
+    await this.tokenManager.clearTokens();
 
     if (!idToken) {
       // If no token, just redirect to home page

@@ -1,345 +1,454 @@
 # Keysako Identity
 
-A multi-framework authentication library for integrating with Keysako identity provider. This library provides authentication buttons and utilities for various JavaScript frameworks.
+A secure, multi-framework authentication library for JavaScript applications with pluggable token storage strategies.
 
-## Packages
+[![npm version](https://badge.fury.io/js/@keysako/core.svg)](https://badge.fury.io/js/@keysako/core)
+[![Build Status](https://github.com/keysako/keysako-js/workflows/CI/badge.svg)](https://github.com/keysako/keysako-js/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## 🚀 Features
+
+- **🔐 Secure by Design**: Multiple token storage strategies (memory, session, encrypted, custom)
+- **🎯 Framework Agnostic**: Support for React, Vue, and vanilla JavaScript
+- **🛡️ Security First**: Built-in XSS protection, automatic token expiration, and secure defaults
+- **🔌 Pluggable Storage**: Implement custom storage for enterprise needs
+- **📱 Universal**: Works in browsers, PWAs, mobile apps, and Node.js environments
+- **🎨 Customizable**: Flexible theming and configuration options
+- **🚪 Easy Integration**: Drop-in authentication buttons and components
+
+## 📦 Packages
 
 This monorepo contains the following packages:
 
-- `@keysako/core`: Core functionality that powers all framework implementations
-- `@keysako/react`: React components for Keysako authentication
-- `@keysako/vue`: Vue components for Keysako authentication
+- [`@keysako/core`](packages/core/): Core functionality and vanilla JS support
+- [`@keysako/react`](packages/react/): React components and hooks
+- [`@keysako/vue`](packages/vue/): Vue components and composables
 
-## Installation
+## 🏃‍♂️ Quick Start
 
-### Core Package (Vanilla JS)
-
-```bash
-npm install @keysako/core
-```
-
-### React
+### Installation
 
 ```bash
-npm install @keysako/react
+# Choose your framework
+npm install @keysako/core      # Vanilla JS
+npm install @keysako/react     # React
+npm install @keysako/vue       # Vue
 ```
 
-### Vue
+### Basic Usage
 
-```bash
-npm install @keysako/vue
-```
-
-### CDN Usage
-
-You can also use Keysako Identity directly from our CDN:
-
-```html
-<script src="https://cdn.keysako.com/v1/keysako-connect.min.js" integrity="sha384-HbjF36XR1u6I0gJAqft5diuu5YR7wOEjFbSk841DhsQ47NRwb18iXDIdEssJYhSY" crossorigin="anonymous"></script>
-```
-
-## Examples
-
-We provide several examples to help you get started quickly:
-
-- **[Vue Example](./examples/vue/)**: A complete Vue.js application using Vite.js that demonstrates authentication flow
-- **[React Example](./examples/react/)**: A React application showing how to integrate Keysako authentication
-- **[Vanilla JS Example](./examples/vanilla/)**: A simple HTML/JS example without any framework
-
-To run any example:
-
-```bash
-# Navigate to the example directory
-cd examples/vue
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-You can also try our [online configurator](https://cdn.keysako.com/configurator.html) to customize your button and get the code.
-
-## Usage
-
-### Core Package (Vanilla JS / Web Components)
+#### Vanilla JavaScript / Web Components
 
 ```html
 <script type="module">
   import { KeysakoButton } from '@keysako/core';
-  
-  // Register the custom element if it hasn't been registered yet
-  if (!customElements.get('keysako-connect')) {
-    customElements.define('keysako-connect', KeysakoButton);
-  }
+
+  customElements.define('keysako-connect', KeysakoButton);
 </script>
 
-<keysako-connect
-  client-id="your-client-id"
-  redirect-uri="your-redirect-uri">
-</keysako-connect>
+<keysako-connect client-id="your-client-id" redirect-uri="your-redirect-uri"> </keysako-connect>
 ```
 
-### React
+#### React
 
 ```jsx
 import { KeysakoButton } from '@keysako/react';
 
-// Using the button directly
 function LoginPage() {
   return (
     <KeysakoButton
       clientId="your-client-id"
       redirectUri="your-redirect-uri"
       theme="default"
-      onSuccess={(result) => console.log('Success:', result)}
-      onError={(error) => console.error('Error:', error)}
+      onSuccess={result => console.log('Success:', result)}
+      onError={error => console.error('Error:', error)}
     />
-  );
-}
-
-// Example with application state management
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authResult, setAuthResult] = useState(null);
-  
-  // Handlers for authentication events
-  const handleSuccess = (result) => {
-    console.log('Authentication successful:', result);
-    setAuthResult(result);
-    setIsAuthenticated(result.success);
-  };
-  
-  const handleError = (error) => {
-    console.error('Authentication failed:', error);
-    setIsAuthenticated(false);
-  };
-  
-  return (
-    <div>
-      {isAuthenticated ? (
-        <div>
-          <h1>Welcome to your profile</h1>
-          <button onClick={() => {
-            // Use TokenManager to clear tokens and update state
-            const tokenManager = TokenManager.getInstance();
-            tokenManager.clearTokens();
-            setIsAuthenticated(false);
-          }}>Sign out</button>
-        </div>
-      ) : (
-        <div>
-          <h1>Please sign in</h1>
-          <KeysakoButton
-            clientId="your-client-id"
-            redirectUri="your-redirect-uri"
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
-        </div>
-      )}
-    </div>
   );
 }
 ```
 
-### Vue
+#### Vue
 
 ```vue
 <template>
-  <div>
-    <!-- Using the button directly -->
-    <KeysakoButton
-      client-id="your-client-id"
-      redirect-uri="your-redirect-uri"
-      theme="default"
-      @success="handleSuccess"
-      @error="handleError"
-    />
-  </div>
+  <KeysakoButton
+    client-id="your-client-id"
+    redirect-uri="your-redirect-uri"
+    theme="default"
+    @success="handleSuccess"
+    @error="handleError"
+  />
 </template>
 
 <script setup>
-import { KeysakoButton, createKeysako } from '@keysako/vue';
+import { KeysakoButton } from '@keysako/vue';
 
-// Using the composable for authentication
-const keysako = createKeysako({
-  clientId: 'your-client-id',
-  redirectUri: 'your-redirect-uri'
-});
-
-// Access authentication state and methods
-const { isAuthenticated, login, logout } = keysako;
-
-// Set up callbacks
-keysako.onSuccess((result) => {
-  console.log('Authentication successful:', result);
-});
-
-keysako.onError((error) => {
-  console.error('Authentication failed:', error);
-});
-
-// Event handlers for the button
 function handleSuccess(result) {
-  console.log('Button success:', result);
+  console.log('Authentication successful:', result);
 }
 
 function handleError(error) {
-  console.error('Button error:', error);
+  console.error('Authentication failed:', error);
 }
 </script>
 ```
 
-## Configuration Options
+## 🔍 Understanding Authentication Results
 
-### Button Options
+The `AuthResult` interface provides comprehensive information about the authentication outcome, enabling you to make informed decisions about user access and UX flows.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `clientId` | string | required | Your Keysako client ID |
-| `redirectUri` | string | window.location.origin | The URI where users will be redirected after authentication |
-| `theme` | string | 'default' | Button theme: 'default', 'light', or 'dark' |
-| `shape` | string | 'rounded' | Button shape: 'rounded' or 'sharp' |
-| `logoOnly` | boolean | false | Display only the logo without text |
-| `usePopup` | boolean | false | Use popup mode for authentication |
-| `age` | number | - | Age verification requirement |
-| `locale` | string | - | Force a specific language (overrides browser language) |
-| `onSuccess` | function | - | Callback function for successful authentication |
-| `onError` | function | - | Callback function for authentication errors |
+### AuthResult Properties
 
-### Events
-
-The button emits the following events:
-
-| Event | Description | Data |
-|-------|-------------|------|
-| `success` | Fired when authentication is successful | `{ success: true, token?: string, hasRequiredAge?: boolean }` |
-| `error` | Fired when authentication fails | `{ error: string, details?: any }` |
-
-### Environment Variables
-
-You can configure the identity server URI using environment variables:
-
-#### Vite.js
-```
-# .env file
-VITE_KEYSAKO_IDENTITY_SERVER_URI=https://auth.keysako.com
-```
-
-#### Create React App
-```
-# .env file
-REACT_APP_KEYSAKO_IDENTITY_SERVER_URI=https://auth.keysako.com
-```
-
-#### Direct Browser Access
-```javascript
-// Set before loading the library
-window.ENV_KEYSAKO_IDENTITY_SERVER_URI = 'https://auth.keysako.com';
-```
-
-This allows you to use different server endpoints for development, staging, and production environments without modifying the code.
-
-## Advanced Usage
-
-### Custom Styling
-
-You can customize the button appearance using CSS variables:
-
-```css
-keysako-connect, .keysako-button {
-  --keysako-btn-bg: #4285f4;
-  --keysako-btn-color: white;
-  --keysako-btn-border: none;
-  --keysako-btn-hover-bg: #3367d6;
-  --keysako-btn-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-  --keysako-btn-radius: 4px;
-  --keysako-badge-bg: #202124;
-  --keysako-badge-color: white;
-  --keysako-btn-backdrop-filter: none;
-  --keysako-btn-text-shadow: none;
+```typescript
+interface AuthResult {
+  success: boolean;
+  isAuthorized: boolean;
+  token?: string;
+  hasIdentity: boolean;
+  hasRequiredAge: boolean;
+  requiredAge?: string;
+  isCountryAllowed: boolean;
+  countryCode?: string;
+  expiresAt?: string; // Unix timestamp as string (e.g., "1750081485")
+  error?: string;
 }
 ```
 
-### Token Management
+> **📝 Note about `expiresAt`**: This field contains the JWT `exp` claim value, which is a Unix timestamp in seconds. In your application, you'll need to convert it to a JavaScript Date: `new Date(parseInt(expiresAt) * 1000)`.
 
-The library provides utilities for token management:
+| Property           | Type    | Description                                                                                                   |
+| ------------------ | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `success`          | boolean | Whether the authentication was successful                                                                     |
+| `isAuthorized`     | boolean | Whether the user is authorized to access the service (meets age requirements and is allowed in their country) |
+| `token`            | string? | Access token (only present if success is true)                                                                |
+| `hasIdentity`      | boolean | Whether the user has an identity (if identity verification was requested)                                     |
+| `hasRequiredAge`   | boolean | Whether the age requirement was met (if age verification was requested)                                       |
+| `requiredAge`      | string? | The required age for the user (e.g., "18", "16", "-13")                                                       |
+| `isCountryAllowed` | boolean | Whether the user is allowed to access the service in their country                                            |
+| `countryCode`      | string? | The country of the user (ISO 3166-1 alpha-2, e.g., "FR", "US", "CA")                                          |
+| `expiresAt`        | string? | The expiration time of the token (Unix timestamp as string, e.g., "1750081485")                               |
+| `error`            | string? | Error message (only present if success is false)                                                              |
 
-```javascript
-import { TokenManager } from '@keysako/core';
+### Making Decisions with AuthResult
 
-const tokenManager = TokenManager.getInstance();
+Use the `AuthResult` properties to implement proper access control and user experience:
 
-// Check if user is authenticated
-const isAuthenticated = tokenManager.isAuthenticated();
+#### ✅ Full Access
 
-// Get access token
-const accessToken = tokenManager.getAccessToken();
-
-// Get ID token
-const idToken = tokenManager.getIdToken();
-
-// Get token claims
-const claims = tokenManager.getTokenClaims();
-
-// Clear tokens (logout)
-tokenManager.clearTokens();
+```typescript
+function handleAuthSuccess(result: AuthResult) {
+  if (result.success && result.isAuthorized) {
+    // User is fully authenticated and authorized
+    redirectToApp();
+    showWelcomeMessage();
+  }
+}
 ```
 
-## Browser Support
+#### 🚫 Age Restriction
 
-This library supports all modern browsers:
+```typescript
+function handleAuthSuccess(result: AuthResult) {
+  if (result.success && !result.hasRequiredAge) {
+    // User authenticated but doesn't meet age requirements
+    showAgeRestrictionMessage(result.requiredAge);
+    redirectToAgeVerification();
+  }
+}
+```
+
+#### 🌍 Geographic Restriction
+
+```typescript
+function handleAuthSuccess(result: AuthResult) {
+  if (result.success && !result.isCountryAllowed) {
+    // User authenticated but service not available in their country
+    showGeographicRestrictionMessage(result.countryCode);
+    redirectToUnavailablePage();
+  }
+}
+```
+
+#### 🔄 Identity Verification Required
+
+```typescript
+function handleAuthSuccess(result: AuthResult) {
+  if (result.success && !result.hasIdentity) {
+    // User authenticated but needs identity verification
+    redirectToIdentityVerification();
+  }
+}
+```
+
+#### 📱 Comprehensive UX Flow
+
+```typescript
+function handleAuthSuccess(result: AuthResult) {
+  if (!result.success) {
+    showErrorMessage(result.error);
+    return;
+  }
+
+  // Check authorization status
+  if (result.isAuthorized) {
+    // Full access granted
+    storeToken(result.token);
+
+    // Handle token expiration if provided
+    if (result.expiresAt) {
+      const expirationDate = new Date(parseInt(result.expiresAt) * 1000);
+      scheduleTokenRefresh(expirationDate);
+    }
+
+    redirectToApp();
+  } else {
+    // Handle specific authorization issues
+    if (!result.hasRequiredAge) {
+      showAgeRestrictionDialog(result.requiredAge);
+    } else if (!result.isCountryAllowed) {
+      showGeographicRestrictionDialog(result.countryCode);
+    } else if (!result.hasIdentity) {
+      redirectToIdentityVerification();
+    }
+  }
+
+  // Log analytics
+  trackAuthentication({
+    success: result.success,
+    authorized: result.isAuthorized,
+    country: result.countryCode,
+    hasIdentity: result.hasIdentity,
+    expiresAt: result.expiresAt ? new Date(parseInt(result.expiresAt) * 1000) : null,
+  });
+}
+```
+
+#### ⏰ Working with Token Expiration
+
+```typescript
+function checkTokenExpiration(result: AuthResult) {
+  if (result.expiresAt) {
+    const expirationDate = new Date(parseInt(result.expiresAt) * 1000);
+    const now = new Date();
+
+    if (expirationDate > now) {
+      const timeUntilExpiry = expirationDate.getTime() - now.getTime();
+      console.log(`Token expires in ${Math.round(timeUntilExpiry / 1000)} seconds`);
+      console.log(`Token expires at: ${expirationDate.toLocaleString()}`);
+    } else {
+      console.log('Token has expired');
+    }
+  }
+}
+```
+
+## 🛡️ Secure Token Storage
+
+Keysako Identity provides multiple storage strategies to meet different security requirements:
+
+### Built-in Strategies
+
+```typescript
+import { TokenManager } from '@keysako/core';
+
+// Default: Session storage (secure, cleared when tab closes)
+const tokenManager = TokenManager.getInstance();
+
+// Memory storage (most secure, doesn't persist)
+const tokenManager = TokenManager.getInstance({
+  storageStrategy: 'memory',
+});
+
+// Encrypted localStorage
+const tokenManager = TokenManager.getInstance({
+  storageStrategy: 'encrypted',
+  encryptionKey: 'your-encryption-key',
+});
+
+// Legacy localStorage (for backward compatibility)
+const tokenManager = TokenManager.getInstance({
+  storageStrategy: 'localStorage',
+});
+```
+
+### Custom Storage
+
+Implement your own storage for enterprise needs:
+
+```typescript
+import { BaseTokenStorage, TokenData } from '@keysako/core';
+
+class MyCustomStorage extends BaseTokenStorage {
+  constructor() {
+    super('my-storage');
+  }
+
+  isAvailable(): boolean {
+    return true;
+  }
+
+  setItem(key: string, tokens: TokenData): void {
+    // Your storage logic
+  }
+
+  getItem(key: string): TokenData | null {
+    // Your retrieval logic
+  }
+
+  removeItem(key: string): void {
+    // Your removal logic
+  }
+}
+
+const tokenManager = TokenManager.getInstance({
+  customStorage: new MyCustomStorage(),
+});
+```
+
+## 📚 Examples
+
+We provide comprehensive examples for different use cases:
+
+- **[Vue Example](./examples/vue/)**: Complete Vue.js application with Vite
+- **[React Example](./examples/react/)**: React application with TypeScript
+- **[Vanilla JS Example](./examples/vanilla/)**: Pure HTML/JS implementation
+- **[Custom Storage Examples](./examples/custom-storage/)**: Advanced storage implementations
+
+## ⚙️ Configuration
+
+### Button Options
+
+| Option        | Type    | Default                | Description                              |
+| ------------- | ------- | ---------------------- | ---------------------------------------- |
+| `clientId`    | string  | required               | Your Keysako client ID                   |
+| `redirectUri` | string  | window.location.origin | OAuth redirect URI                       |
+| `theme`       | string  | 'default'              | Button theme: 'default', 'light', 'dark' |
+| `shape`       | string  | 'rounded'              | Button shape: 'rounded', 'sharp'         |
+| `logoOnly`    | boolean | false                  | Display only logo without text           |
+| `usePopup`    | boolean | false                  | Use popup instead of redirect            |
+| `age`         | number  | -                      | Age verification requirement             |
+| `locale`      | string  | -                      | Force specific language                  |
+
+### Storage Options
+
+| Strategy         | Security   | Persistence  | Use Case              | Default |
+| ---------------- | ---------- | ------------ | --------------------- | ------- |
+| `sessionStorage` | ⭐⭐⭐⭐   | Session      | Most web apps         | ✅      |
+| `memory`         | ⭐⭐⭐⭐⭐ | None         | High-security, kiosks |         |
+| `encrypted`      | ⭐⭐⭐⭐   | Configurable | Enhanced security     |         |
+| `localStorage`   | ⭐⭐       | Permanent    | Legacy compatibility  |         |
+| `custom`         | ⭐⭐⭐⭐⭐ | Configurable | Enterprise needs      |         |
+
+## 🔧 Development
+
+### Setup
+
+```bash
+git clone https://github.com/keysako/keysako-js.git
+cd keysako-js
+npm install
+```
+
+### Build
+
+```bash
+npm run build        # Build all packages
+npm run build:core   # Build core package only
+npm run build:react  # Build React package only
+npm run build:vue    # Build Vue package only
+```
+
+### Testing
+
+```bash
+npm test             # Run all tests
+npm run test:unit    # Unit tests only
+npm run test:e2e     # End-to-end tests
+```
+
+### Examples
+
+```bash
+cd examples/vue
+npm install
+npm run dev
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Add** tests for new functionality
+5. **Ensure** all tests pass
+6. **Submit** a pull request
+
+### Code of Conduct
+
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
+## 📋 Migration Guide
+
+### From v1.1.x to v1.2.x
+
+The main breaking change is that TokenManager methods are now async:
+
+```typescript
+// Before (v1.1.x)
+const isAuth = tokenManager.isAuthenticated();
+const token = tokenManager.getAccessToken();
+
+// After (v1.2.x)
+const isAuth = await tokenManager.isAuthenticated();
+const token = await tokenManager.getAccessToken();
+```
+
+See the [Migration Guide](MIGRATION.md) for detailed instructions.
+
+## 🌐 Browser Support
 
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
 
-## Development
-
-### Project Structure
+## 🏗️ Architecture
 
 ```
 keysako-js/
 ├── packages/
-│   ├── core/         # Core functionality
-│   ├── react/        # React components
-│   └── vue/          # Vue components
+│   ├── core/         # Framework-agnostic core
+│   ├── react/        # React bindings
+│   └── vue/          # Vue bindings
 ├── examples/
-│   ├── vanilla/      # Vanilla JS example
-│   ├── react/        # React example
-│   └── vue/          # Vue example
-├── templates/        # Templates for CDN files
-├── scripts/          # Build and utility scripts
-└── dist/             # Generated distribution files
+│   ├── vanilla/      # Pure JS examples
+│   ├── react/        # React examples
+│   ├── vue/          # Vue examples
+│   └── custom-storage/ # Storage implementations
+└── scripts/          # Build and utility scripts
 ```
 
-### Building the Library
+## 📄 License
 
-```bash
-# Install dependencies
-npm install
+MIT License - see the [LICENSE](LICENSE) file for details.
 
-# Build all packages
-npm run build
-```
+## 🙏 Acknowledgments
 
-This will:
-1. Compile TypeScript files
-2. Bundle the packages
-3. Generate CDN files with integrity hashes
-4. Create example HTML files
+- Built with modern security best practices
+- Inspired by OAuth 2.0 and OpenID Connect standards
+- Community-driven development
 
-### Versioning
+## 🔗 Links
 
-When releasing a new version:
+- **Documentation**: [https://keysako.com/developers](https://keysako.com/developers)
+- **Issues**: [GitHub Issues](https://github.com/keysako/keysako-js/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/keysako/keysako-js/discussions)
 
-1. Update the version in the root `package.json` and all package-specific `package.json` files
-2. Run `npm run build` to generate new files with updated version numbers
-3. The CDN files will be available in the `dist/` directory
+---
 
-## License
-
-MIT
+**Made with ❤️ by the Keysako team and contributors**

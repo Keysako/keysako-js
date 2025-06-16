@@ -30,32 +30,43 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
   const finalUsePopup = usePopup;
 
   useEffect(() => {
-    if (!buttonRef.current) return;
+    const initButton = async () => {
+      if (!buttonRef.current) return;
 
-    // Create style element for the button
-    const styleElement = document.createElement('style');
+      try {
+        // Create style element for the button
+        const styleElement = document.createElement('style');
 
-    // Create button instance
-    const button = new CoreButton({
-      clientId: finalClientId,
-      redirectUri: finalRedirectUri,
-      theme,
-      shape,
-      logoOnly,
-      usePopup: finalUsePopup,
-      age,
-      locale,
-      onSuccess,
-      onError,
-    });
+        // Create button instance
+        const button = new CoreButton({
+          clientId: finalClientId,
+          redirectUri: finalRedirectUri,
+          theme,
+          shape,
+          logoOnly,
+          usePopup: finalUsePopup,
+          age,
+          locale,
+          onSuccess,
+          onError,
+        });
 
-    // Add styles
-    styleElement.textContent = button.getStyles();
-    buttonRef.current.appendChild(styleElement);
+        // Add styles
+        styleElement.textContent = button.getStyles();
+        buttonRef.current.appendChild(styleElement);
 
-    // Create and add button element
-    const buttonElement = button.createButtonElement();
-    buttonRef.current.appendChild(buttonElement);
+        // Create and add button element
+        const buttonElement = await button.createButtonElement();
+        buttonRef.current.appendChild(buttonElement);
+      } catch (error) {
+        console.error('Error initializing Keysako button:', error);
+        if (onError) {
+          onError({ error: 'Failed to initialize button' });
+        }
+      }
+    };
+
+    initButton();
 
     // Clean up
     return () => {
@@ -63,7 +74,18 @@ export const KeysakoButton: React.FC<KeysakoButtonProps> = ({
         buttonRef.current.innerHTML = '';
       }
     };
-  }, [finalClientId, finalRedirectUri, theme, shape, logoOnly, finalUsePopup, age, locale]);
+  }, [
+    finalClientId,
+    finalRedirectUri,
+    theme,
+    shape,
+    logoOnly,
+    finalUsePopup,
+    age,
+    locale,
+    onSuccess,
+    onError,
+  ]);
 
   // Handle authentication events
   useEffect(() => {

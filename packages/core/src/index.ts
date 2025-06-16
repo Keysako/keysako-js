@@ -5,3 +5,4 @@ export * from './TokenManager';
 export * from './utils';
 export * from './themes';
 export * from './KeysakoConnectElement';
+export * from './storage';

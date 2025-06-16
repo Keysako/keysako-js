@@ -47,12 +47,15 @@ logoutBtn.addEventListener('click', logout);
 /**
  * Crée un bouton Keysako et l'ajoute au conteneur spécifié
  */
-function createButton(containerId: string, options: {
-  theme?: 'light' | 'dark',
-  logoOnly?: boolean,
-  age?: number,
-  usePopup?: boolean
-}) {
+function createButton(
+  containerId: string,
+  options: {
+    theme?: 'light' | 'dark';
+    logoOnly?: boolean;
+    age?: number;
+    usePopup?: boolean;
+  }
+) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -65,7 +68,7 @@ function createButton(containerId: string, options: {
     age: options.age,
     usePopup: options.usePopup || false,
     onSuccess: handleAuthSuccess,
-    onError: handleAuthError
+    onError: handleAuthError,
   });
 
   // Ajouter les styles au document s'ils n'existent pas déjà
@@ -182,11 +185,15 @@ function displayTokenInfo() {
   const idToken = tokenManager.getIdToken();
   const claims = tokenManager.getTokenClaims();
 
-  tokenInfo.textContent = JSON.stringify({
-    accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
-    idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
-    claims
-  }, null, 2);
+  tokenInfo.textContent = JSON.stringify(
+    {
+      accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
+      idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
+      claims,
+    },
+    null,
+    2
+  );
 }
 
 /**

@@ -5,8 +5,19 @@
  */
 export function parseJwt(token: string): any {
   try {
+    // Check if token is valid
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+
     // Get the payload part of the JWT (second part)
     const base64Url = token.split('.')[1];
+
+    // Check if the token has a payload part
+    if (!base64Url) {
+      return null;
+    }
+
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 
     // Decode the base64 string

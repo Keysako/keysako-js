@@ -141,7 +141,7 @@ export class KeysakoButton {
    * Create the button element
    * @returns HTML element for the button
    */
-  createButtonElement(): HTMLElement {
+  async createButtonElement(): Promise<HTMLElement> {
     const button = document.createElement('button');
     button.className = 'keysako-button';
 
@@ -169,7 +169,7 @@ export class KeysakoButton {
       if (buttonText.isRTL) {
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken()
+        text.textContent = (await this.tokenManager.hasValidAccessToken())
           ? buttonText.signOut
           : buttonText.signIn;
         button.appendChild(text);
@@ -178,7 +178,7 @@ export class KeysakoButton {
         button.appendChild(logoContainer);
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken()
+        text.textContent = (await this.tokenManager.hasValidAccessToken())
           ? buttonText.signOut
           : buttonText.signIn;
         button.appendChild(text);
@@ -265,23 +265,23 @@ export class KeysakoButton {
   /**
    * Handle button click
    */
-  private handleClick(): void {
+  private async handleClick(): Promise<void> {
     if (!this.provider) {
       console.error('KeysakoButton: Provider not initialized');
       return;
     }
 
-    if (this.tokenManager.hasValidAccessToken()) {
-      this.provider.logout();
+    if (await this.tokenManager.hasValidAccessToken()) {
+      await this.provider.logout();
     } else {
-      this.provider.login();
+      await this.provider.login();
     }
   }
 
   /**
    * Update the button state based on authentication status
    */
-  private updateButtonState(): void {
+  private async updateButtonState(): Promise<void> {
     if (!this.element) return;
 
     const userLang = this.options.locale || navigator.language || 'en';
@@ -289,9 +289,8 @@ export class KeysakoButton {
 
     const textElement = this.element.querySelector('.keysako-button-text');
     if (textElement) {
-      textElement.textContent = this.tokenManager.hasValidAccessToken()
-        ? buttonText.signOut
-        : buttonText.signIn;
+      const isAuthenticated = await this.tokenManager.hasValidAccessToken();
+      textElement.textContent = isAuthenticated ? buttonText.signOut : buttonText.signIn;
     }
   }
 

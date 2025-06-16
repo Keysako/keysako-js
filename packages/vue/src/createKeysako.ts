@@ -19,7 +19,11 @@ export function createKeysako(options: KeysakoOptions): KeysakoReturn {
   let successCallback: ((result: AuthResult) => void) | null = null;
   let errorCallback: ((error: AuthError) => void) | null = null;
 
-  onMounted(() => {
+  // Event handlers
+  let handleTokensUpdated: (() => Promise<void>) | null = null;
+  let handleTokensCleared: (() => void) | null = null;
+
+  onMounted(async () => {
     // Initialize the provider and token manager
     tokenManager = TokenManager.getInstance();
 
@@ -40,27 +44,31 @@ export function createKeysako(options: KeysakoOptions): KeysakoReturn {
     });
 
     // Check if user is already authenticated
-    isAuthenticated.value = tokenManager.hasValidAccessToken();
+    isAuthenticated.value = await tokenManager.hasValidAccessToken();
 
     // Listen for token events
-    const handleTokensUpdated = () => {
+    handleTokensUpdated = async () => {
       if (tokenManager) {
-        isAuthenticated.value = tokenManager.hasValidAccessToken();
+        isAuthenticated.value = await tokenManager.hasValidAccessToken();
       }
     };
 
-    const handleTokensCleared = () => {
+    handleTokensCleared = () => {
       isAuthenticated.value = false;
     };
 
     window.addEventListener(AuthEvents.TOKENS_UPDATED, handleTokensUpdated);
     window.addEventListener(AuthEvents.TOKENS_CLEARED, handleTokensCleared);
+  });
 
-    // Clean up event listeners
-    onUnmounted(() => {
+  // Clean up event listeners
+  onUnmounted(() => {
+    if (handleTokensUpdated) {
       window.removeEventListener(AuthEvents.TOKENS_UPDATED, handleTokensUpdated);
+    }
+    if (handleTokensCleared) {
       window.removeEventListener(AuthEvents.TOKENS_CLEARED, handleTokensCleared);
-    });
+    }
   });
 
   /**
@@ -85,16 +93,16 @@ export function createKeysako(options: KeysakoOptions): KeysakoReturn {
    * Get the access token
    * @returns Access token or null
    */
-  const getAccessToken = () => {
-    return tokenManager ? tokenManager.getAccessToken() : null;
+  const getAccessToken = async (): Promise<string | null> => {
+    return tokenManager ? await tokenManager.getAccessToken() : null;
   };
 
   /**
    * Get the ID token
    * @returns ID token or null
    */
-  const getIdToken = () => {
-    return tokenManager ? tokenManager.getIdToken() : null;
+  const getIdToken = async (): Promise<string | null> => {
+    return tokenManager ? await tokenManager.getIdToken() : null;
   };
 
   /**
