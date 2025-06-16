@@ -23,12 +23,14 @@ h1 {
   border-left: 4px solid #4285f4;
 }
 
-.auth-result h2, .auth-error h2 {
+.auth-result h2,
+.auth-error h2 {
   margin-top: 0;
   color: #333;
 }
 
-.result-details, .error-details {
+.result-details,
+.error-details {
   background-color: white;
   padding: 1rem;
   border-radius: 4px;
@@ -56,11 +58,23 @@ h1 {
 
 .button-row {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 1.5rem;
   background-color: #f5f5f5;
   border-radius: 8px;
+  align-items: center;
+}
+
+.button-row h2 {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Specific styling for Keysako buttons */
+.button-row [data-keysako-button] {
+  margin: 0.5rem;
 }
 
 h2 {
@@ -88,6 +102,7 @@ h2 {
 
 pre {
   background-color: rgba(0, 0, 0, 0.1);
+  color: #1f2937;
   padding: 1rem;
   border-radius: 4px;
   overflow: auto;
@@ -95,8 +110,204 @@ pre {
   margin: 1rem 0;
 }
 
+/* AuthResult Display Styles */
+.status-overview {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  border-left: 4px solid #e5e7eb;
+}
+
+.status-card:has(.status-icon:contains('✅')) {
+  border-left-color: #10b981;
+}
+
+.status-card:has(.status-icon:contains('🟢')) {
+  border-left-color: #10b981;
+}
+
+.status-card:has(.status-icon:contains('🟡')) {
+  border-left-color: #f59e0b;
+}
+
+.status-card:has(.status-icon:contains('❌')) {
+  border-left-color: #ef4444;
+}
+
+.status-icon {
+  font-size: 1.5rem;
+}
+
+.status-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.result-item strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status.warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.age-value,
+.country-code {
+  font-weight: 600;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.expires-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.expires-at {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.expires-raw {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #6b7280;
+  opacity: 0.8;
+}
+
+.token-section,
+.error-section,
+.json-section {
+  margin-bottom: 1.5rem;
+}
+
+.token-section h3,
+.error-section h3,
+.json-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.token-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.copy-button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background: #4338ca;
+}
+
+.error-message {
+  background-color: #fef2f2;
+  color: #991b1b;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 4px solid #ef4444;
+}
+
+
+
+.json-display {
+  background: #1f2937;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.json-display pre {
+  margin: 0;
+  padding: 1rem;
+  color: #f9fafb !important;
+  background: #1f2937 !important;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
+  }
+
+  .status-overview {
+    flex-direction: column;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }

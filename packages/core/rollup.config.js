@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 
 // Pour obtenir __dirname dans un module ESM
@@ -9,6 +10,11 @@ const __dirname = dirname(__filename);
 
 export default {
   input: resolve(__dirname, 'dist/index.js'),
+  plugins: [
+    nodeResolve({
+      preferBuiltins: false,
+    }),
+  ],
   output: [
     {
       file: resolve(__dirname, 'dist/index.cjs.js'),

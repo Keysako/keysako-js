@@ -62,41 +62,47 @@ export const KeysakoButton = defineComponent({
   setup(props, { emit }) {
     const buttonRef = ref<HTMLDivElement | null>(null);
     let buttonInstance: CoreButton | null = null;
+    let handleAuthComplete: ((event: CustomEvent) => void) | null = null;
 
-    onMounted(() => {
+    onMounted(async () => {
       if (!buttonRef.value) return;
 
-      // Create style element for the button
-      const styleElement = document.createElement('style');
+      try {
+        // Create style element for the button
+        const styleElement = document.createElement('style');
 
-      // Create button instance
-      buttonInstance = new CoreButton({
-        clientId: props.clientId,
-        redirectUri: props.redirectUri,
-        theme: props.theme as ButtonTheme,
-        shape: props.shape as ButtonShape,
-        logoOnly: props.logoOnly,
-        usePopup: props.usePopup,
-        age: props.age,
-        locale: props.locale,
-        onSuccess: (result: AuthResult) => {
-          emit('success', result);
-        },
-        onError: (error: AuthError) => {
-          emit('error', error);
-        },
-      });
+        // Create button instance
+        buttonInstance = new CoreButton({
+          clientId: props.clientId,
+          redirectUri: props.redirectUri,
+          theme: props.theme as ButtonTheme,
+          shape: props.shape as ButtonShape,
+          logoOnly: props.logoOnly,
+          usePopup: props.usePopup,
+          age: props.age,
+          locale: props.locale,
+          onSuccess: (result: AuthResult) => {
+            emit('success', result);
+          },
+          onError: (error: AuthError) => {
+            emit('error', error);
+          },
+        });
 
-      // Add styles
-      styleElement.textContent = buttonInstance.getStyles();
-      buttonRef.value.appendChild(styleElement);
+        // Add styles
+        styleElement.textContent = buttonInstance.getStyles();
+        buttonRef.value.appendChild(styleElement);
 
-      // Create and add button element
-      const buttonElement = buttonInstance.createButtonElement();
-      buttonRef.value.appendChild(buttonElement);
+        // Create and add button element
+        const buttonElement = await buttonInstance.createButtonElement();
+        buttonRef.value.appendChild(buttonElement);
+      } catch (error) {
+        console.error('Error initializing Keysako button:', error);
+        emit('error', { error: 'Failed to initialize button' });
+      }
 
       // Handle authentication events
-      const handleAuthComplete = (event: CustomEvent) => {
+      handleAuthComplete = (event: CustomEvent) => {
         const result = event.detail;
         if (result.success) {
           emit('success', result);
@@ -106,16 +112,18 @@ export const KeysakoButton = defineComponent({
       };
 
       window.addEventListener(AuthEvents.AUTH_COMPLETE, handleAuthComplete as EventListener);
+    });
 
-      // Clean up event listeners
-      onUnmounted(() => {
+    // Clean up event listeners
+    onUnmounted(() => {
+      if (handleAuthComplete) {
         window.removeEventListener(AuthEvents.AUTH_COMPLETE, handleAuthComplete as EventListener);
+      }
 
-        // Clean up button element
-        if (buttonRef.value) {
-          buttonRef.value.innerHTML = '';
-        }
-      });
+      // Clean up button element
+      if (buttonRef.value) {
+        buttonRef.value.innerHTML = '';
+      }
     });
 
     return () =>

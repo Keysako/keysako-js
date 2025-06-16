@@ -70,8 +70,11 @@ describe('KeysakoButton', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the button with default props', () => {
+  it('renders the button with default props', async () => {
     const { container } = render(<KeysakoButton {...defaultProps} />);
+
+    // Wait for the async initialization
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(container.querySelector('div[data-keysako-button="true"]')).toBeInTheDocument();
     expect(container.querySelector('.keysako-button')).toBeInTheDocument();

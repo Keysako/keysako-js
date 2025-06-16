@@ -12,11 +12,11 @@ Object.defineProperty(global, 'crypto', {
       return arr;
     },
     subtle: {
-      digest: async (algorithm, data) => {
+      digest: async (_a, _b) => {
         return new Uint8Array([1, 2, 3, 4, 5]);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 // Mock localStorage
@@ -24,9 +24,15 @@ const localStorageMock = (() => {
   let store = {};
   return {
     getItem: key => store[key] || null,
-    setItem: (key, value) => { store[key] = value.toString(); },
-    clear: () => { store = {}; },
-    removeItem: key => { delete store[key]; }
+    setItem: (key, value) => {
+      store[key] = value.toString();
+    },
+    clear: () => {
+      store = {};
+    },
+    removeItem: key => {
+      delete store[key];
+    },
   };
 })();
 
@@ -35,9 +41,15 @@ const sessionStorageMock = (() => {
   let store = {};
   return {
     getItem: key => store[key] || null,
-    setItem: (key, value) => { store[key] = value.toString(); },
-    clear: () => { store = {}; },
-    removeItem: key => { delete store[key]; }
+    setItem: (key, value) => {
+      store[key] = value.toString();
+    },
+    clear: () => {
+      store = {};
+    },
+    removeItem: key => {
+      delete store[key];
+    },
   };
 })();
 
@@ -49,6 +61,6 @@ global.fetch = jest.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve({}),
     text: () => Promise.resolve(''),
-    ok: true
+    ok: true,
   })
 );

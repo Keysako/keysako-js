@@ -10,12 +10,8 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@keysako/core": [
-        "../../packages/core/src"
-      ],
-      "@keysako/react": [
-        "../../packages/react/src"
-      ]
+      "@keysako/core": ["../../packages/core/src"],
+      "@keysako/react": ["../../packages/react/src"]
     }
   }
 }

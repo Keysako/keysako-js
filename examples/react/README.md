@@ -39,43 +39,39 @@ The application will be available at [http://localhost:5173](http://localhost:51
 ### Standard Authentication Button
 
 ```jsx
-<KeysakoButton 
-  clientId="your-client-id" 
-  redirectUri={window.location.origin}
-  theme="light" 
-/>
+<KeysakoButton clientId="your-client-id" redirectUri={window.location.origin} theme="light" />
 ```
 
 ### Button with Age Verification
 
 ```jsx
-<KeysakoButton 
-  clientId="your-client-id" 
+<KeysakoButton
+  clientId="your-client-id"
   redirectUri={window.location.origin}
-  theme="light" 
-  age={18} 
+  theme="light"
+  age={18}
 />
 ```
 
 ### Button with Popup
 
 ```jsx
-<KeysakoButton 
-  clientId="your-client-id" 
+<KeysakoButton
+  clientId="your-client-id"
   redirectUri={window.location.origin}
-  theme="light" 
-  usePopup 
+  theme="light"
+  usePopup
 />
 ```
 
 ### Logo-Only Button
 
 ```jsx
-<KeysakoButton 
-  clientId="your-client-id" 
+<KeysakoButton
+  clientId="your-client-id"
   redirectUri={window.location.origin}
-  theme="light" 
-  logoOnly 
+  theme="light"
+  logoOnly
 />
 ```
 

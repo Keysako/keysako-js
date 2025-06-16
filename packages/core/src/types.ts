@@ -40,11 +40,44 @@ export interface AuthResult {
   /** Whether the authentication was successful */
   success: boolean;
 
+  /** Whether the user is authorized to access the service
+   * Has required age and is allowed to access the service in their country
+   */
+  isAuthorized: boolean;
+
   /** Access token (only present if success is true) */
   token?: string;
 
+  /** Whether the user has an identity (if identity verification was requested) */
+  hasIdentity: boolean;
+
   /** Whether the age requirement was met (if age verification was requested) */
-  hasRequiredAge?: boolean;
+  hasRequiredAge: boolean;
+
+  /** The required age for the user
+   * Ex: "18", "16", "-13"
+   * If not provided, the user will be authenticated without age verification
+   */
+  requiredAge?: string;
+
+  /** Whether the user is allowed to access the service in their country
+   * Ex: "true", "false"
+   * If not provided, the user will be authenticated without country verification
+   */
+  isCountryAllowed: boolean;
+
+  /** The country of the user (ISO 3166-1 alpha-2)
+   * Ex: "FR", "US", "CA"
+   * If not provided, the user will be authenticated without country verification
+   */
+  countryCode?: string;
+
+  /** The expiration time of the token (Unix timestamp in seconds)
+   * Ex: 1750081485
+   * This comes from the JWT 'exp' claim and represents seconds since Unix epoch
+   * If not provided, the token will be authenticated without expiration verification
+   */
+  expiresAt?: string;
 
   /** Error message (only present if success is false) */
   error?: string;

@@ -42,10 +42,10 @@ export interface KeysakoReturn {
   logout: () => Promise<void>;
 
   /** Get access token function */
-  getAccessToken: () => string | null;
+  getAccessToken: () => Promise<string | null>;
 
   /** Get ID token function */
-  getIdToken: () => string | null;
+  getIdToken: () => Promise<string | null>;
 
   /** Handle success callback */
   onSuccess: (callback: (result: AuthResult) => void) => void;

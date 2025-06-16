@@ -1,6 +1,7 @@
 // Importer le module env en premier pour exposer les variables d'environnement
 import './env';
 import { KeysakoButton, TokenManager, logoSvg } from '@keysako/core';
+
 import { getIdentityServerUri } from './env';
 
 // Afficher l'URI du serveur d'identité depuis les variables d'environnement
@@ -36,7 +37,7 @@ createButton('logo-button-dark', { theme: 'dark', logoOnly: true });
 const tokenManager = TokenManager.getInstance();
 
 // Vérifier l'état initial de l'authentification
-updateAuthStatus();
+updateAuthStatus().catch(console.error);
 
 // Ajouter les écouteurs d'événements
 window.addEventListener('keysako:tokens_updated', updateAuthStatus);
@@ -47,12 +48,15 @@ logoutBtn.addEventListener('click', logout);
 /**
  * Crée un bouton Keysako et l'ajoute au conteneur spécifié
  */
-function createButton(containerId: string, options: {
-  theme?: 'light' | 'dark',
-  logoOnly?: boolean,
-  age?: number,
-  usePopup?: boolean
-}) {
+function createButton(
+  containerId: string,
+  options: {
+    theme?: 'light' | 'dark';
+    logoOnly?: boolean;
+    age?: number;
+    usePopup?: boolean;
+  }
+) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -65,7 +69,7 @@ function createButton(containerId: string, options: {
     age: options.age,
     usePopup: options.usePopup || false,
     onSuccess: handleAuthSuccess,
-    onError: handleAuthError
+    onError: handleAuthError,
   });
 
   // Ajouter les styles au document s'ils n'existent pas déjà
@@ -103,10 +107,10 @@ function createButton(containerId: string, options: {
   }
 
   // Ajouter l'écouteur de clic
-  buttonElement.addEventListener('click', () => {
-    if (tokenManager.hasValidAccessToken()) {
+  buttonElement.addEventListener('click', async () => {
+    if (await tokenManager.hasValidAccessToken()) {
       tokenManager.clearTokens();
-      updateAuthStatus();
+      await updateAuthStatus();
     } else {
       // Utiliser le provider pour se connecter
       keysakoButton['provider']?.login();
@@ -141,7 +145,7 @@ function handleAuthSuccess(result: any) {
   console.log('Authentication successful:', result);
   authStatus.textContent = 'Authentifié';
   authStatus.style.color = 'green';
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }
 
 /**
@@ -151,14 +155,14 @@ function handleAuthError(error: any) {
   console.error('Authentication failed:', error);
   authStatus.textContent = `Échec d'authentification: ${error.error}`;
   authStatus.style.color = 'red';
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }
 
 /**
  * Met à jour l'état d'authentification dans l'interface
  */
-function updateAuthStatus() {
-  const isAuthenticated = tokenManager.hasValidAccessToken();
+async function updateAuthStatus() {
+  const isAuthenticated = await tokenManager.hasValidAccessToken();
 
   if (isAuthenticated) {
     authStatus.textContent = 'Authentifié';
@@ -177,16 +181,20 @@ function updateAuthStatus() {
 /**
  * Affiche les informations du token
  */
-function displayTokenInfo() {
-  const accessToken = tokenManager.getAccessToken();
-  const idToken = tokenManager.getIdToken();
-  const claims = tokenManager.getTokenClaims();
+async function displayTokenInfo() {
+  const accessToken = await tokenManager.getAccessToken();
+  const idToken = await tokenManager.getIdToken();
+  const claims = await tokenManager.getTokenClaims();
 
-  tokenInfo.textContent = JSON.stringify({
-    accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
-    idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
-    claims
-  }, null, 2);
+  tokenInfo.textContent = JSON.stringify(
+    {
+      accessToken: accessToken ? `${accessToken.substring(0, 10)}...` : null,
+      idToken: idToken ? `${idToken.substring(0, 10)}...` : null,
+      claims,
+    },
+    null,
+    2
+  );
 }
 
 /**
@@ -194,5 +202,5 @@ function displayTokenInfo() {
  */
 function logout() {
   tokenManager.clearTokens();
-  updateAuthStatus();
+  updateAuthStatus().catch(console.error);
 }

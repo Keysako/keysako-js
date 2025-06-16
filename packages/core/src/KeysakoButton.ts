@@ -39,7 +39,7 @@ export function getButtonText(locale: string): ButtonText {
   // Extract language code
   const lang = locale.split('-')[0].toLowerCase();
 
-  // Add more languages as needed
+  // Complete translations for all supported languages
   const translations: Record<string, ButtonText> = {
     en: defaultText,
     fr: {
@@ -57,6 +57,78 @@ export function getButtonText(locale: string): ButtonText {
     de: {
       signIn: 'Mit Keysako anmelden',
       signOut: 'Abmelden',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    it: {
+      signIn: 'Accedi con Keysako',
+      signOut: 'Esci',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    pt: {
+      signIn: 'Entrar com Keysako',
+      signOut: 'Sair',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    nl: {
+      signIn: 'Inloggen met Keysako',
+      signOut: 'Uitloggen',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    pl: {
+      signIn: 'Zaloguj się z Keysako',
+      signOut: 'Wyloguj się',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ru: {
+      signIn: 'Войти с Keysako',
+      signOut: 'Выйти',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ja: {
+      signIn: 'Keysakoでサインイン',
+      signOut: 'サインアウト',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    ko: {
+      signIn: 'Keysako로 로그인',
+      signOut: '로그아웃',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    zh: {
+      signIn: '使用 Keysako 登录',
+      signOut: '登出',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    hi: {
+      signIn: 'Keysako से साइन इन करें',
+      signOut: 'साइन आउट',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    tr: {
+      signIn: 'Keysako ile giriş yap',
+      signOut: 'Çıkış yap',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    th: {
+      signIn: 'เข้าสู่ระบบด้วย Keysako',
+      signOut: 'ออกจากระบบ',
+      ageFormat: '{age}+',
+      isRTL: false,
+    },
+    vi: {
+      signIn: 'Đăng nhập với Keysako',
+      signOut: 'Đăng xuất',
       ageFormat: '{age}+',
       isRTL: false,
     },
@@ -141,7 +213,7 @@ export class KeysakoButton {
    * Create the button element
    * @returns HTML element for the button
    */
-  createButtonElement(): HTMLElement {
+  async createButtonElement(): Promise<HTMLElement> {
     const button = document.createElement('button');
     button.className = 'keysako-button';
 
@@ -169,7 +241,7 @@ export class KeysakoButton {
       if (buttonText.isRTL) {
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken()
+        text.textContent = (await this.tokenManager.hasValidAccessToken())
           ? buttonText.signOut
           : buttonText.signIn;
         button.appendChild(text);
@@ -178,7 +250,7 @@ export class KeysakoButton {
         button.appendChild(logoContainer);
         const text = document.createElement('span');
         text.className = 'keysako-button-text';
-        text.textContent = this.tokenManager.hasValidAccessToken()
+        text.textContent = (await this.tokenManager.hasValidAccessToken())
           ? buttonText.signOut
           : buttonText.signIn;
         button.appendChild(text);
@@ -265,23 +337,23 @@ export class KeysakoButton {
   /**
    * Handle button click
    */
-  private handleClick(): void {
+  private async handleClick(): Promise<void> {
     if (!this.provider) {
       console.error('KeysakoButton: Provider not initialized');
       return;
     }
 
-    if (this.tokenManager.hasValidAccessToken()) {
-      this.provider.logout();
+    if (await this.tokenManager.hasValidAccessToken()) {
+      await this.provider.logout();
     } else {
-      this.provider.login();
+      await this.provider.login();
     }
   }
 
   /**
    * Update the button state based on authentication status
    */
-  private updateButtonState(): void {
+  private async updateButtonState(): Promise<void> {
     if (!this.element) return;
 
     const userLang = this.options.locale || navigator.language || 'en';
@@ -289,9 +361,8 @@ export class KeysakoButton {
 
     const textElement = this.element.querySelector('.keysako-button-text');
     if (textElement) {
-      textElement.textContent = this.tokenManager.hasValidAccessToken()
-        ? buttonText.signOut
-        : buttonText.signIn;
+      const isAuthenticated = await this.tokenManager.hasValidAccessToken();
+      textElement.textContent = isAuthenticated ? buttonText.signOut : buttonText.signIn;
     }
   }
 

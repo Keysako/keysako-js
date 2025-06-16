@@ -39,10 +39,10 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 ### Bouton d'authentification standard
 
 ```vue
-<KeysakoButton 
-  client-id="your-client-id" 
+<KeysakoButton
+  client-id="your-client-id"
   :redirect-uri="redirectUri"
-  theme="light" 
+  theme="light"
   @success="handleSuccess"
   @error="handleError"
 />
@@ -51,11 +51,11 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 ### Bouton avec vérification d'âge
 
 ```vue
-<KeysakoButton 
-  client-id="your-client-id" 
+<KeysakoButton
+  client-id="your-client-id"
   :redirect-uri="redirectUri"
-  theme="light" 
-  :age="18" 
+  theme="light"
+  :age="18"
   @success="handleSuccess"
   @error="handleError"
 />
@@ -64,11 +64,11 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 ### Bouton avec popup
 
 ```vue
-<KeysakoButton 
-  client-id="your-client-id" 
+<KeysakoButton
+  client-id="your-client-id"
   :redirect-uri="redirectUri"
-  theme="light" 
-  :use-popup="true" 
+  theme="light"
+  :use-popup="true"
   @success="handleSuccess"
   @error="handleError"
 />
@@ -77,11 +77,11 @@ L'application sera disponible à l'adresse [http://localhost:5173](http://localh
 ### Bouton avec logo uniquement
 
 ```vue
-<KeysakoButton 
-  client-id="your-client-id" 
+<KeysakoButton
+  client-id="your-client-id"
   :redirect-uri="redirectUri"
-  theme="light" 
-  :logo-only="true" 
+  theme="light"
+  :logo-only="true"
   @success="handleSuccess"
   @error="handleError"
 />
@@ -97,18 +97,18 @@ import { createKeysako } from '@keysako/vue';
 
 const keysako = createKeysako({
   clientId: 'your-client-id',
-  redirectUri: window.location.origin
+  redirectUri: window.location.origin,
 });
 
 // Accéder à l'état d'authentification et aux méthodes
 const { isAuthenticated, login, logout } = keysako;
 
 // Configurer les callbacks
-keysako.onSuccess((result) => {
+keysako.onSuccess(result => {
   console.log('Authentication successful:', result);
 });
 
-keysako.onError((error) => {
+keysako.onError(error => {
   console.error('Authentication failed:', error);
 });
 </script>

@@ -4,16 +4,16 @@ import { TokenManager } from '../src/TokenManager';
 // Mock TokenManager
 jest.mock('../src/TokenManager', () => {
   const mockInstance = {
-    saveTokens: jest.fn(),
-    getTokens: jest.fn(),
-    getAccessToken: jest.fn(),
-    getIdToken: jest.fn(),
-    hasValidAccessToken: jest.fn(),
-    clearTokens: jest.fn(),
-    getTokensFromCode: jest.fn(),
-    getTokenClaims: jest.fn(),
-    hasRequiredAge: jest.fn(),
-    isAuthenticated: jest.fn(),
+    saveTokens: jest.fn().mockResolvedValue(undefined),
+    getTokens: jest.fn().mockResolvedValue(null),
+    getAccessToken: jest.fn().mockResolvedValue(null),
+    getIdToken: jest.fn().mockResolvedValue(null),
+    hasValidAccessToken: jest.fn().mockResolvedValue(false),
+    clearTokens: jest.fn().mockResolvedValue(undefined),
+    getTokensFromCode: jest.fn().mockResolvedValue({}),
+    getTokenClaims: jest.fn().mockResolvedValue(null),
+    hasRequiredAge: jest.fn().mockResolvedValue(true),
+    isAuthenticated: jest.fn().mockResolvedValue(false),
   };
 
   return {
@@ -187,26 +187,28 @@ describe('IdentityProvider', () => {
   });
 
   describe('isAuthenticated', () => {
-    it('should return true if TokenManager has a valid access token', () => {
-      mockTokenManager.hasValidAccessToken.mockReturnValue(true);
+    it('should return true if TokenManager has a valid access token', async () => {
+      mockTokenManager.hasValidAccessToken.mockResolvedValue(true);
 
-      expect(provider.isAuthenticated()).toBe(true);
+      const result = await provider.isAuthenticated();
+      expect(result).toBe(true);
       expect(mockTokenManager.hasValidAccessToken).toHaveBeenCalled();
     });
 
-    it('should return false if TokenManager does not have a valid access token', () => {
-      mockTokenManager.hasValidAccessToken.mockReturnValue(false);
+    it('should return false if TokenManager does not have a valid access token', async () => {
+      mockTokenManager.hasValidAccessToken.mockResolvedValue(false);
 
-      expect(provider.isAuthenticated()).toBe(false);
+      const result = await provider.isAuthenticated();
+      expect(result).toBe(false);
       expect(mockTokenManager.hasValidAccessToken).toHaveBeenCalled();
     });
   });
 
   describe('logout', () => {
-    it('should clear tokens and call onSuccess callback', () => {
-      mockTokenManager.getTokens.mockReturnValue(null);
+    it('should clear tokens and call onSuccess callback', async () => {
+      mockTokenManager.getTokens.mockResolvedValue(null);
 
-      provider.logout();
+      await provider.logout();
 
       expect(mockTokenManager.clearTokens).toHaveBeenCalled();
     });
